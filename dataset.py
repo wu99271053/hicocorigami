@@ -61,16 +61,3 @@ class ChromosomeDataset(Dataset):
             return self.feature_matrices[idx], self.contact_matrices[idx]
 
 
-# Example usage
-data_dir = 'path/to/your/data'
-window = 16
-length = 128
-val_chr = 1
-
-# For training
-train_dataset = ChromosomeDataset(data_dir, window, length, val_chr, mode='train')
-# Use train_dataset with a DataLoader
-
-# For validation
-# val_dataset = ChromosomeDataset(data_dir, window, length, val_chr, mode='val')
-# Use val_dataset with a DataLoader

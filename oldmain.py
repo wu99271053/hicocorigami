@@ -20,9 +20,10 @@ val_chr = 1
 feature='DNA'
 itype='Outward'
 batch_size=256
-train_dataset = ChromosomeDataset(data_dir, window, length,feature,val_chr,itype,mode='train')
+
+train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,itype,mode='train')
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
-val_dataset = ChromosomeDataset(data_dir, window, length,feature,val_chr,itype,mode='val')
+val_dataset = ChromosomeDataset(data_dir, window, length,val_chr,itype,mode='val')
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True)
 
 

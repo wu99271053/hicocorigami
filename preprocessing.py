@@ -168,8 +168,8 @@ def chromosome_dataset(feature,length,data_dir,itype,data_matrix,selected_id,win
         subset_df = df[(df['id1'] >= lower_bound) & (df['id1'] <= upper_bound) &
                    (df['id2'] >= lower_bound) & (df['id2'] <= upper_bound)]
         
-        feature_matrices = []
-        contact_matrices = []
+        feature_tensors = []
+        contact_tensors = []
         for start_id in tqdm(range(lower_bound,max_id+1)):
             if start_id in selected_id:
                 continue
@@ -191,11 +191,17 @@ def chromosome_dataset(feature,length,data_dir,itype,data_matrix,selected_id,win
                     # Implement your imputation logic here
                     # For example, setting a default value or calculating an imputed value
                         contact_matrix[i, j] = contact_matrix[j, i] = 0
-            feature_matrices.append(feature_matrix)
-            contact_matrices.append(contact_matrix)
+            feature_tensor = torch.tensor(feature_matrix, dtype=torch.float32)
+            contact_tensor = torch.tensor(contact_matrix, dtype=torch.float32)
+            contact_tensors.append(contact_tensor)
+            feature_tensors.append(feature_tensor)
 
-        torch.save(feature_matrices,f'{data_dir}/{chr}_{window_size}_{length}_{feature}_feature_matrix.pt')
-        torch.save(contact_matrices,f'{data_dir}/{chr}_{window_size}_{length}_{feature}_contact_matrix.pt')
+
+        concatenated_feature_matrix = torch.cat(feature_tensors, dim=0)
+        concatenated_contact_matrix = torch.cat(contact_tensors, dim=0)
+
+        torch.save(concatenated_feature_matrix,f'{data_dir}/{chr}_{window_size}_{length}_{feature}_{itype}_feature_matrix.pt')
+        torch.save(concatenated_contact_matrix,f'{data_dir}/{chr}_{window_size}_{length}_{feature}_{itype}_contact_matrix.pt')
 
     
     for i in tqdm(range(1,17)):
