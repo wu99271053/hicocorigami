@@ -46,8 +46,12 @@ class ChromosomeDataset(Dataset):
             # Concatenate all training feature and contact matrices
             self.feature_matrices = torch.cat(self.feature_matrices, dim=0)
             self.contact_matrices = torch.cat(self.contact_matrices, dim=0)
-            self.contact_matrices=self.contact_matrices.view(-1, 16, 16)
-            self.feature_matrices=self.feature_matrices.view(-1, 4, 2048)
+            self.contact_matrices=self.contact_matrices.view(-1, window, window)
+            if feature=='DNA':
+                self.feature_matrices=self.feature_matrices.view(-1, 4, length*window)
+            else:
+                self.feature_matrices=self.feature_matrices.view(-1, 30, length*window)
+
 
         elif self.mode == 'val':
             feature_file = f"{val_chr}_{window}_{length}_{feature}_{itype}_feature_matrix.pt"
@@ -56,8 +60,12 @@ class ChromosomeDataset(Dataset):
             contact_path = os.path.join(self.data_dir, contact_file)
             self.feature_matrices = torch.load(feature_path)
             self.contact_matrices = torch.load(contact_path)
-            self.contact_matrices=self.contact_matrices.view(-1, 16, 16)
-            self.feature_matrices=self.feature_matrices.view(-1, 4, 2048)
+            self.contact_matrices=self.contact_matrices.view(-1, window, window)
+            if feature=='DNA':
+                self.feature_matrices=self.feature_matrices.view(-1, 4, window*length)
+            else:
+                self.feature_matrices=self.feature_matrices.view(-1, 30, length*window)
+
 
 
 
