@@ -219,7 +219,7 @@ if __name__ == "__main__":
                         help='length of Nucleosomal DNA')
     parser.add_argument('--i_type',default='Outward',
                         help='interaction type')
-    parser.add_argument('--features',default='DNA',
+    parser.add_argument('--features',default='hmDNA',
                         help='feature used')
     parser.add_argument('--data_dir',default='../../Desktop/processed',
                         help='processed data and saved checkpoint')
