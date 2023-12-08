@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 import subprocess
 import os
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader,random_split
 from tqdm import tqdm
 
 import os
@@ -90,3 +90,35 @@ class ChromosomeDataset(Dataset):
 # print(sampled[1].shape,sampled[0].shape)
 # # data=torch.load('../../My Drive/corigamidata/1_16_128_DNA_Outward_contact_matrix.pt')
 # # print(data.shape)
+
+feature_matrix = torch.load('../../My Drive/jokedata/feature_matrix.pt')
+contact_matrix = torch.load('../../My Drive/jokedata/contact_matrix.pt')
+
+# Step 2: Create a custom dataset
+class MyDataset(Dataset):
+    def __init__(self, features, labels):
+        self.features = features
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.features)
+
+    def __getitem__(self, idx):
+        return self.features[idx], self.labels[idx]
+
+# dataset = MyDataset(feature_matrix, contact_matrix)
+
+# # Step 3: Split the data
+# # Define the proportion for the training set (e.g., 80%)
+# train_size = int(0.8 * len(dataset))
+# val_size = len(dataset) - train_size
+
+# # Randomly split the dataset into training and validation sets
+# train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+
+# # Step 4: Create DataLoaders
+# train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True,drop_last=True)
+# val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False,drop_last=True)
+
+# sampled=next(iter(train_loader))
+# print(sampled[1].shape,sampled[0].shape)
