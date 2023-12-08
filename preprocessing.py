@@ -10,9 +10,9 @@ import argparse
 
 
 
-def cleaningup(data_dir=None,window=None,i_type=None):
-    nucleosome=f'{data_dir}/histone_modification.csv'
-    interaction=f'{data_dir}/{i_type}_WT_G1.csv'
+def cleaningup(data_dir=None,raw_dir=None,window=None,i_type=None):
+    nucleosome=f'{raw_dir}/histone_modification.csv'
+    interaction=f'{raw_dir}/{i_type}_WT_G1.csv'
 
     def removing_repeated():
         df=pd.read_csv(nucleosome, header=None, usecols=[0, 1],skiprows=1)
@@ -72,9 +72,9 @@ def cleaningup(data_dir=None,window=None,i_type=None):
 
 
 
-def preprocessing(data_dir=None,length=None,use_histone=False):
-    nucleosome=f'{data_dir}/histone_modification.csv'
-    fasta=f'{data_dir}/saccer.fna'
+def preprocessing(data_dir=None,raw_dir=None,length=None,use_histone=False):
+    nucleosome=f'{raw_dir}/histone_modification.csv'
+    fasta=f'{raw_dir}/saccer.fna'
     feature='hmDNA' if use_histone else 'DNA'
 
     def one_hot_encoding(seq):
@@ -211,8 +211,8 @@ def chromosome_dataset(feature,length,data_dir,itype,data_matrix,selected_id,win
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='C.Origami_like Training Module.')
-    parser.add_argument('--data_dir', default='../../Desktop/raw',
-                        help='Path to the model checkpoint')
+    parser.add_argument('--raw_dir', default='../../Desktop/raw',
+                        help='Path to the raw data')
     parser.add_argument('--window', default=16,type=int,
                         help='size of heatmap')
     parser.add_argument('--length',default=128,type=int,
@@ -221,6 +221,8 @@ if __name__ == "__main__":
                         help='interaction type')
     parser.add_argument('--features',default='DNA',
                         help='feature used')
+    parser.add_argument('--data_dir',default='../../Desktop/processed',
+                        help='processed data and saved checkpoint')
     
     args = parser.parse_args()
     
@@ -229,17 +231,17 @@ if __name__ == "__main__":
     if os.path.exists(f'{args.data_dir}/{args.i_type}_{args.window}.csv') and os.path.exists(f'{args.data_dir}/seq{args.length}_{args.features}.npy'):
         print("data already exists")
         data_matrix=np.load(f'{args.data_dir}/seq{args.length}_{args.features}.npy')
-        df=pd.read_csv(f'{args.data_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
+        df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
         selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
 
         chromosome_dataset(args.features,args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_ids,window_size=args.window)
     
     else:
-        selected_id=cleaningup(data_dir=args.data_dir,window=args.window,i_type=args.i_type)
+        selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
         if args.features=='DNA':
-            preprocessing(data_dir=args.data_dir,length=args.length,use_histone=False)
+            preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length,use_histone=False)
         else:
-            preprocessing(data_dir=args.data_dir,length=args.length,use_histone=True)
+            preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length,use_histone=True)
         data_matrix=np.load(f'{args.data_dir}/seq{args.length}_{args.features}.npy')
         chromosome_dataset(args.features,args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_id,window_size=args.window)
 
