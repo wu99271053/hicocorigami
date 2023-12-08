@@ -91,20 +91,20 @@ class ChromosomeDataset(Dataset):
 # # data=torch.load('../../My Drive/corigamidata/1_16_128_DNA_Outward_contact_matrix.pt')
 # # print(data.shape)
 
-feature_matrix = torch.load('../../My Drive/jokedata/feature_matrix.pt')
-contact_matrix = torch.load('../../My Drive/jokedata/contact_matrix.pt')
+# feature_matrix = torch.load('../../My Drive/jokedata/feature_matrix.pt')
+# contact_matrix = torch.load('../../My Drive/jokedata/contact_matrix.pt')
 
-# Step 2: Create a custom dataset
-class MyDataset(Dataset):
-    def __init__(self, features, labels):
-        self.features = features
-        self.labels = labels
+# # Step 2: Create a custom dataset
+# class MyDataset(Dataset):
+#     def __init__(self, features, labels):
+#         self.features = features
+#         self.labels = labels
 
-    def __len__(self):
-        return len(self.features)
+#     def __len__(self):
+#         return len(self.features)
 
-    def __getitem__(self, idx):
-        return self.features[idx], self.labels[idx]
+#     def __getitem__(self, idx):
+#         return self.features[idx], self.labels[idx]
 
 # dataset = MyDataset(feature_matrix, contact_matrix)
 
