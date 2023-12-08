@@ -5,8 +5,6 @@ import newmodel
 from dataset import ChromosomeDataset
 import copy
 import numpy as np
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader,random_split
 
 
 # Assuming your model is defined as 'model'
