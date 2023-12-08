@@ -305,9 +305,9 @@ class ConvTransModel(ConvModel):
     def __init__(self, num_genomic_features=False, mid_hidden = 256, record_attn = False):
         super(ConvTransModel, self).__init__(num_genomic_features)
         print('Initializing ConvTransModel')
-        self.encoder = EncoderSplit(num_genomic_features, output_size = mid_hidden, num_blocks = 6)
+        self.encoder = EncoderSplit(num_genomic_features, output_size = mid_hidden, num_blocks = 12)
         if num_genomic_features:
-            self.encoder=EncoderSplit_with_epi(num_genomic_features, output_size = mid_hidden, num_blocks = 6)
+            self.encoder=EncoderSplit_with_epi(num_genomic_features, output_size = mid_hidden, num_blocks = 12)
         self.attn = AttnModule(hidden = mid_hidden, record_attn = record_attn)
         self.decoder = Decoder(mid_hidden * 2)
         self.record_attn = record_attn
