@@ -13,54 +13,54 @@ from torch.utils.data import Dataset, DataLoader,random_split
 # Assuming your data loaders are defined as 'train_loader' and 'val_loader'
 
 # Define the loss function and optimizer
-feature_matrix = torch.load('/content/drive/My Drive/jokedata/feature_matrix.pt')
-contact_matrix = torch.load('/content/drive/My Drive/jokedata/contact_matrix.pt')
+# feature_matrix = torch.load('/content/drive/My Drive/jokedata/feature_matrix.pt')
+# contact_matrix = torch.load('/content/drive/My Drive/jokedata/contact_matrix.pt')
 # feature_matrix = torch.load('/mnt/d/processed/jokedata/feature_matrix.pt')
 # contact_matrix = torch.load('/mnt/d/processed/jokedata/contact_matrix.pt')
 
 # Step 2: Create a custom dataset
-class MyDataset(Dataset):
-    def __init__(self, features, labels):
-        self.features = features
-        self.labels = labels
+# class MyDataset(Dataset):
+#     def __init__(self, features, labels):
+#         self.features = features
+#         self.labels = labels
 
-    def __len__(self):
-        return len(self.features)
+#     def __len__(self):
+#         return len(self.features)
 
-    def __getitem__(self, idx):
-        return self.features[idx], self.labels[idx]
+#     def __getitem__(self, idx):
+#         return self.features[idx], self.labels[idx]
 
-dataset = MyDataset(feature_matrix, contact_matrix)
+# dataset = MyDataset(feature_matrix, contact_matrix)
 
-# Step 3: Split the data
-# Define the proportion for the training set (e.g., 80%)
-train_size = int(0.8 * len(dataset))
-val_size = len(dataset) - train_size
+# # Step 3: Split the data
+# # Define the proportion for the training set (e.g., 80%)
+# train_size = int(0.8 * len(dataset))
+# val_size = len(dataset) - train_size
 
-# Randomly split the dataset into training and validation sets
-train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-batch_size=64
-# Step 4: Create DataLoaders
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True,drop_last=True)
-val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False,drop_last=True)
-
-
-# data_dir = '/content/drive/MyDrive/corigamidata'
-# window = 16
-# length = 128
-# val_chr = 1
-# feature='DNA'
-# itype='Outward'
+# # Randomly split the dataset into training and validation sets
+# train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
 # batch_size=64
-
-# train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='train')
-# train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True,num_workers=8)
-# val_dataset=ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='val')
-# val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True,num_workers=8)
+# # Step 4: Create DataLoaders
+# train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True,drop_last=True)
+# val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False,drop_last=True)
 
 
+data_dir = '/content/drive/My Drive/corigami_hmdna'
+window = 16
+length = 128
+val_chr = 1
+feature='hmDNA'
+itype='Outward'
+batch_size=64
 
-model=newmodel.ConvTransModel(False,16)
+train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='train')
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True,num_workers=8)
+val_dataset=ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='val')
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True,num_workers=8)
+
+
+
+model=newmodel.ConvTransModel(True,16)
 untrain=copy.deepcopy(model)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
@@ -140,9 +140,9 @@ with torch.no_grad():
         all_targets.append(targets.view(-1).numpy())
         all_untrain.append(untrain_outputs.cpu().view(-1).numpy())
 
-np.savetxt("computed_outputs.csv", np.concatenate(all_outputs), delimiter=",")
-np.savetxt("ground_truths.csv", np.concatenate(all_targets), delimiter=",")
-np.savetxt("untrained_outputs.csv", np.concatenate(all_untrain), delimiter=",")
+np.savetxt("/content/drive/My Drive/computed_outputs.csv", np.concatenate(all_outputs), delimiter=",")
+np.savetxt("/content/drive/My Drive/ground_truths.csv", np.concatenate(all_targets), delimiter=",")
+np.savetxt("/content/drive/My Drive/untrained_outputs.csv", np.concatenate(all_untrain), delimiter=",")
 
 
 # computed_outputs = np.loadtxt("computed_outputs.csv", delimiter=",")
