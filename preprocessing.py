@@ -92,7 +92,7 @@ def preprocessing(data_dir=None,raw_dir=None,length=None,use_histone=False):
         """Expand a single value into a Gaussian distribution."""
         gaussian = norm.pdf(np.arange(length), loc=length // 2, scale=std_dev)
         gaussian /= gaussian.sum()  # Normalize the distribution
-        return value * gaussian
+        return np.power(2,value)* gaussian
 
     def transform_dataframe(df, length):
         """Transform the DataFrame into a 3D array with the Gaussian expansion."""
