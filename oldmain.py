@@ -13,8 +13,8 @@ from torch.utils.data import Dataset, DataLoader,random_split
 # Assuming your data loaders are defined as 'train_loader' and 'val_loader'
 
 # Define the loss function and optimizer
-feature_matrix = torch.load('/content/drive/MyDrive/jokedata/feature_matrix.pt')
-contact_matrix = torch.load('/content/drive/MyDrive/jokedata/contact_matrix.pt')
+feature_matrix = torch.load('/content/drive/My Drive/jokedata/feature_matrix.pt')
+contact_matrix = torch.load('/content/drive/My Drive/jokedata/contact_matrix.pt')
 # feature_matrix = torch.load('/mnt/d/processed/jokedata/feature_matrix.pt')
 # contact_matrix = torch.load('/mnt/d/processed/jokedata/contact_matrix.pt')
 
