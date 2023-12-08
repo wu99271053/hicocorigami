@@ -22,9 +22,9 @@ itype='Outward'
 batch_size=64
 
 train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='train')
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True,num_workers=16)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True,num_workers=8)
 val_dataset=ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='val')
-val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True,num_workers=16)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True,num_workers=8)
 
 
 model=newmodel.ConvTransModel(False,16)
