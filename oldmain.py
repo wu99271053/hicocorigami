@@ -45,7 +45,8 @@ from torch.utils.data import Dataset, DataLoader,random_split
 # val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False,drop_last=True)
 
 
-data_dir = '/content/drive/My Drive/corigami_hmdna'
+#data_dir = '/content/drive/My Drive/corigami_hmdna'
+data_dir = '/user4/kyoto1/ericwyx/corigami_hmdna'
 window = 16
 length = 128
 val_chr = 1
@@ -140,9 +141,9 @@ with torch.no_grad():
         all_targets.append(targets.view(-1).numpy())
         all_untrain.append(untrain_outputs.cpu().view(-1).numpy())
 
-np.savetxt("/content/drive/My Drive/computed_outputs.csv", np.concatenate(all_outputs), delimiter=",")
-np.savetxt("/content/drive/My Drive/ground_truths.csv", np.concatenate(all_targets), delimiter=",")
-np.savetxt("/content/drive/My Drive/untrained_outputs.csv", np.concatenate(all_untrain), delimiter=",")
+np.savetxt("computed_outputs.csv", np.concatenate(all_outputs), delimiter=",")
+np.savetxt("ground_truths.csv", np.concatenate(all_targets), delimiter=",")
+np.savetxt("untrained_outputs.csv", np.concatenate(all_untrain), delimiter=",")
 
 
 # computed_outputs = np.loadtxt("computed_outputs.csv", delimiter=",")
