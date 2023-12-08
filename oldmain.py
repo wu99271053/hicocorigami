@@ -47,7 +47,7 @@ import numpy as np
 data_dir = '/user4/kyoto1/ericwyx/corigami_hmdna'
 window = 16
 length = 128
-val_chr = 15
+val_chr = 16
 feature='hmDNA'
 itype='Outward'
 batch_size=64
@@ -139,9 +139,9 @@ with torch.no_grad():
         all_targets.append(targets.view(-1).numpy())
         all_untrain.append(untrain_outputs.cpu().view(-1).numpy())
 
-np.savetxt("computed_outputs_16.csv", np.concatenate(all_outputs), delimiter=",")
-np.savetxt("ground_truths_16.csv", np.concatenate(all_targets), delimiter=",")
-np.savetxt("untrained_outputs_16.csv", np.concatenate(all_untrain), delimiter=",")
+np.savetxt("computed_outputs_15.csv", np.concatenate(all_outputs), delimiter=",")
+np.savetxt("ground_truths_15.csv", np.concatenate(all_targets), delimiter=",")
+np.savetxt("untrained_outputs_15.csv", np.concatenate(all_untrain), delimiter=",")
 
 
 # computed_outputs = np.loadtxt("computed_outputs.csv", delimiter=",")
