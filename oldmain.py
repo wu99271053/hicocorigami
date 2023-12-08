@@ -13,10 +13,10 @@ from torch.utils.data import Dataset, DataLoader,random_split
 # Assuming your data loaders are defined as 'train_loader' and 'val_loader'
 
 # Define the loss function and optimizer
-#feature_matrix = torch.load('/content/drive/MyDrive/jokedata/feature_matrix.pt')
-#contact_matrix = torch.load('/content/drive/MyDrive/jokedata/contact_matrix.pt')
-feature_matrix = torch.load('/mnt/d/processed/jokedata/feature_matrix.pt')
-contact_matrix = torch.load('/mnt/d/processed/jokedata/contact_matrix.pt')
+feature_matrix = torch.load('/content/drive/MyDrive/jokedata/feature_matrix.pt')
+contact_matrix = torch.load('/content/drive/MyDrive/jokedata/contact_matrix.pt')
+# feature_matrix = torch.load('/mnt/d/processed/jokedata/feature_matrix.pt')
+# contact_matrix = torch.load('/mnt/d/processed/jokedata/contact_matrix.pt')
 
 # Step 2: Create a custom dataset
 class MyDataset(Dataset):
@@ -69,7 +69,7 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Number of training epochs
-num_epochs = 30
+num_epochs = 100
 best_val_loss = float('inf')
 best_model_path = 'best_model.pth'
 
