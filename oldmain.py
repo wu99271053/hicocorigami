@@ -16,7 +16,7 @@ from torch.utils.data import Dataset, DataLoader,random_split
 #feature_matrix = torch.load('/content/drive/MyDrive/jokedata/feature_matrix.pt')
 #contact_matrix = torch.load('/content/drive/MyDrive/jokedata/contact_matrix.pt')
 feature_matrix = torch.load('/mnt/d/processed/jokedata/feature_matrix.pt')
-contact_matrix = torch.load('/mnt/d/processed/jokedata/jokedata/contact_matrix.pt')
+contact_matrix = torch.load('/mnt/d/processed/jokedata/contact_matrix.pt')
 
 # Step 2: Create a custom dataset
 class MyDataset(Dataset):
