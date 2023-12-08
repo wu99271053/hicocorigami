@@ -50,8 +50,8 @@ class ChromosomeDataset(Dataset):
             self.feature_matrices=self.feature_matrices.view(-1, 4, 2048)
 
         elif self.mode == 'val':
-            feature_file = f"{val_chr}_{window}_{length}_feature_matrix.pt"
-            contact_file = f"{val_chr}_{window}_{length}_contact_matrix.pt"
+            feature_file = f"{val_chr}_{window}_{length}_{feature}_{itype}_feature_matrix.pt"
+            contact_file = f"{val_chr}_{window}_{length}_{feature}_{itype}_contact_matrix.pt"
             feature_path = os.path.join(self.data_dir, feature_file)
             contact_path = os.path.join(self.data_dir, contact_file)
             self.feature_matrices = torch.load(feature_path)
