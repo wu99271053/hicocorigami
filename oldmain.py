@@ -36,7 +36,7 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Number of training epochs
-num_epochs = 100
+num_epochs = 30
 best_val_loss = float('inf')
 best_model_path = 'best_model.pth'
 
