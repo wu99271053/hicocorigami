@@ -1,7 +1,7 @@
 import pyBigWig
 import pandas as pd
 import numpy as np
-
+import torch 
 
 
 # df= pd.read_csv('../../Desktop/raw/histone_modification.csv')
@@ -17,11 +17,19 @@ import numpy as np
 
 # print(usedhm_df.sha
 # 
-df=pd.read_csv(f'../../My Drive/corigamidata/Outward_16.csv',header=None,dtype=np.int32)
-df.columns = ['id1', 'id2', 'value']
-lower_bound = 1
-upper_bound = 1274
+# df=pd.read_csv(f'../../My Drive/corigamidata/Outward_16.csv',header=None,dtype=np.int32)
+# df.columns = ['id1', 'id2', 'value']
+# lower_bound = 1
+# upper_bound = 1274
 
-subset_df = df[(df['id1'] >= lower_bound) & (df['id1'] <= upper_bound) &
-                   (df['id2'] >= lower_bound) & (df['id2'] <= upper_bound)]
-print(df.shape,subset_df.shape)
+# subset_df = df[(df['id1'] >= lower_bound) & (df['id1'] <= upper_bound) &
+#                    (df['id2'] >= lower_bound) & (df['id2'] <= upper_bound)]
+# print(df.shape,subset_df.shape)
+
+oridata=torch.load('../../My Drive/jokedata/contact_matrix.pt')
+print(oridata[1])
+seconddata=torch.load('../../My Drive/corigamidata/1_16_128_DNA_Outward_contact_matrix.pt')
+thirddata=torch.load('../../My Drive/corigami_hmdna/1_16_128_hmDNA_Outward_contact_matrix.pt')
+print(seconddata.reshape(-1,16,16)[1])
+print(thirddata.reshape(-1,16,16)[1])
+print(len(oridata),seconddata.shape,thirddata.shape)

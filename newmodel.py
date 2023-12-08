@@ -74,7 +74,7 @@ class EncoderSplit(nn.Module):
 
 class EncoderSplit_with_epi(nn.Module):
     def __init__(self, epi=False, output_size = 128, filter_size = 5, num_blocks = 12):
-        super(EncoderSplit, self).__init__()
+        super(EncoderSplit_with_epi, self).__init__()
         self.filter_size = filter_size
         self.conv_start_seq = nn.Sequential(
                                     nn.Conv1d(4, 16, 3, 2, 1),
