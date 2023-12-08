@@ -22,9 +22,9 @@ itype='Outward'
 batch_size=256
 
 train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='train')
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True,num_workers=16)
 val_dataset=ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='val')
-val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False,drop_last=True,num_workers=16)
 
 
 model=newmodel.ConvTransModel(False,16)
@@ -112,31 +112,31 @@ np.savetxt("ground_truths.csv", np.concatenate(all_targets), delimiter=",")
 np.savetxt("untrained_outputs.csv", np.concatenate(all_untrain), delimiter=",")
 
 
-computed_outputs = np.loadtxt("computed_outputs.csv", delimiter=",")
-ground_truths = np.loadtxt("ground_truths.csv", delimiter=",")
-untrained_outputs = np.loadtxt("untrained_outputs.csv", delimiter=",")
+# computed_outputs = np.loadtxt("computed_outputs.csv", delimiter=",")
+# ground_truths = np.loadtxt("ground_truths.csv", delimiter=",")
+# untrained_outputs = np.loadtxt("untrained_outputs.csv", delimiter=",")
 
-prediction = computed_outputs[0].reshape(16, 16)
-truth=ground_truths[0].reshape(16, 16)
-untrained=untrained_outputs[0].reshape(16, 16)
+# prediction = computed_outputs[0].reshape(16, 16)
+# truth=ground_truths[0].reshape(16, 16)
+# untrained=untrained_outputs[0].reshape(16, 16)
 
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
+# fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
 
-# Plot the first heatmap
-cax1 = ax1.imshow(prediction, cmap='hot', interpolation='nearest')
-fig.colorbar(cax1, ax=ax1)
-ax1.set_title('predicted')
+# # Plot the first heatmap
+# cax1 = ax1.imshow(prediction, cmap='hot', interpolation='nearest')
+# fig.colorbar(cax1, ax=ax1)
+# ax1.set_title('predicted')
 
-# Plot the second heatmap
-cax2 = ax2.imshow(truth, cmap='hot', interpolation='nearest')
-fig.colorbar(cax2, ax=ax2)
-ax2.set_title('truth')
+# # Plot the second heatmap
+# cax2 = ax2.imshow(truth, cmap='hot', interpolation='nearest')
+# fig.colorbar(cax2, ax=ax2)
+# ax2.set_title('truth')
 
-# Plot the third heatmap
-cax3 = ax3.imshow(untrained, cmap='hot', interpolation='nearest')
-fig.colorbar(cax3, ax=ax3)
-ax3.set_title('untrained')
+# # Plot the third heatmap
+# cax3 = ax3.imshow(untrained, cmap='hot', interpolation='nearest')
+# fig.colorbar(cax3, ax=ax3)
+# ax3.set_title('untrained')
 
-# Display the plot
-plt.show()
-#gergegeg
+# # Display the plot
+# plt.show()
+# #gergegeg

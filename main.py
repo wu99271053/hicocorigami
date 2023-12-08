@@ -4,9 +4,10 @@ import argparse
 import numpy as np
 import pytorch_lightning as pl
 import pytorch_lightning.callbacks as callbacks
+import newmodel
+from dataset import ChromosomeDataset
+import pl_bolts
 
-import corigami.model.corigami_models as corigami_models
-from corigami.data import genome_dataset
 
 def main():
     args = init_parser()
@@ -15,46 +16,70 @@ def main():
 def init_parser():
   parser = argparse.ArgumentParser(description='C.Origami Training Module.')
 
+
+
+
   # Data and Run Directories
   parser.add_argument('--seed', dest='run_seed', default=2077,
                         type=int,
                         help='Random seed for training')
+  parser.add_argument('--window', dest='window', default=16,
+                        type=int,
+                        help='Random seed for training')
+  parser.add_argument('--length', dest='length', default=128,
+                        type=int,
+                        help='Random seed for training')
+  parser.add_argument('--val_chr', dest='val_chr', default=1,
+                        type=int,
+                        help='Random seed for training')
+  parser.add_argument('--feature', dest='feature', default='DNA',
+                        help='Path to the model checkpoint')
+  parser.add_argument('--itype', dest='itpe', default='Outward',
+                        help='Path to the model checkpoint')
+
+  
+  
+  
+  
+  
   parser.add_argument('--save_path', dest='run_save_path', default='checkpoints',
                         help='Path to the model checkpoint')
 
   # Data directories
-  parser.add_argument('--data-root', dest='dataset_data_root', default='data',
+  parser.add_argument('--data-root', dest='dataset_data_root', default='/content/drive/MyDrive/corigamidata',
                         help='Root path of training data', required=True)
-  parser.add_argument('--assembly', dest='dataset_assembly', default='hg38',
-                        help='Genome assembly for training data')
-  parser.add_argument('--celltype', dest='dataset_celltype', default='imr90',
-                        help='Sample cell type for prediction, used for output separation')
+
 
   # Model parameters
   parser.add_argument('--model-type', dest='model_type', default='ConvTransModel',
                         help='CNN with Transformer')
 
   # Training Parameters
-  parser.add_argument('--patience', dest='trainer_patience', default=80,
+  parser.add_argument('--patience', dest='trainer_patience', default=30,
                         type=int,
                         help='Epoches before early stopping')
-  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=80,
+  
+  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=100,
                         type=int,
                         help='Max epochs')
-  parser.add_argument('--save-top-n', dest='trainer_save_top_n', default=20,
+  
+  parser.add_argument('--save-top-n', dest='trainer_save_top_n', default=1,
+                      
                         type=int,
                         help='Top n models to save')
-  parser.add_argument('--num-gpu', dest='trainer_num_gpu', default=4,
+  parser.add_argument('--num-gpu', dest='trainer_num_gpu', default=2,
                         type=int,
                         help='Number of GPUs to use')
 
   # Dataloader Parameters
-  parser.add_argument('--batch-size', dest='dataloader_batch_size', default=8, 
+  parser.add_argument('--batch-size', dest='dataloader_batch_size', default=64, 
                         type=int,
                         help='Batch size')
+  
   parser.add_argument('--ddp-disabled', dest='dataloader_ddp_disabled',
                         action='store_false',
                         help='Using ddp, adjust batch size')
+  
   parser.add_argument('--num-workers', dest='dataloader_num_workers', default=16,
                         type=int,
                         help='Dataloader workers')
@@ -80,8 +105,9 @@ def init_training(args):
     lr_monitor = callbacks.LearningRateMonitor(logging_interval='epoch')
 
     # Logger
-    csv_logger = pl.loggers.CSVLogger(save_dir = f'{args.run_save_path}/csv')
-    all_loggers = csv_logger
+    #csv_logger = pl.loggers.CSVLogger(save_dir = f'{args.run_save_path}/csv')
+    logger = pl.loggers.TensorBoardLogger(save_dir = f'{args.run_save_path}/')
+    all_loggers = logger
     
     # Assign seed
     pl.seed_everything(args.run_seed, workers=True)
@@ -97,8 +123,8 @@ def init_training(args):
                             )
     trainloader = pl_module.get_dataloader(args, 'train')
     valloader = pl_module.get_dataloader(args, 'val')
-    testloader = pl_module.get_dataloader(args, 'test')
-    pl_trainer.fit(pl_module, trainloader, valloader)
+    testloader = pl_module.get_dataloader(args, 'val')
+    pl_trainer.fit(pl_module, trainloader, valloader,)
 
 class TrainModule(pl.LightningModule):
     
@@ -112,11 +138,11 @@ class TrainModule(pl.LightningModule):
         return self.model(x)
 
     def proc_batch(self, batch):
-        seq, features, mat, start, end, chr_name, chr_idx = batch
-        features = torch.cat([feat.unsqueeze(2) for feat in features], dim = 2)
-        inputs = torch.cat([seq, features], dim = 2)
-        mat = mat.float()
-        return inputs, mat
+        inputs, targets = batch
+        inputs = inputs.transpose(1, 2).contiguous()
+        inputs, targets = inputs.float().cuda(), targets.float().cuda()
+
+        return inputs, targets
     
     def training_step(self, batch, batch_idx):
         inputs, mat = self.proc_batch(batch)
@@ -166,7 +192,6 @@ class TrainModule(pl.LightningModule):
                                      lr = 2e-4,
                                      weight_decay = 0)
 
-        import pl_bolts
         scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=10, max_epochs=self.args.trainer_max_epochs)
         scheduler_config = {
             'scheduler': scheduler,
@@ -180,17 +205,7 @@ class TrainModule(pl.LightningModule):
 
     def get_dataset(self, args, mode):
 
-        celltype_root = f'{args.dataset_data_root}/{args.dataset_assembly}/{args.dataset_celltype}'
-        genomic_features = {'ctcf_log2fc' : {'file_name' : 'ctcf_log2fc.bw',
-                                             'norm' : None },
-                            'atac' : {'file_name' : 'atac.bw',
-                                             'norm' : 'log' }}
-        dataset = genome_dataset.GenomeDataset(celltype_root, 
-                                args.dataset_assembly,
-                                genomic_features, 
-                                mode = mode,
-                                include_sequence = True,
-                                include_genomic_features = True)
+        dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.window,val_chr=args.val_chr,feature=args.feature,itype=args.itype,mode=mode)
 
         # Record length for printing validation image
         if mode == 'val':
@@ -223,15 +238,13 @@ class TrainModule(pl.LightningModule):
             num_workers=num_workers,
             pin_memory=True,
             prefetch_factor=1,
-            persistent_workers=True
+            persistent_workers=True,
+            drop_last=True,
         )
         return dataloader
 
     def get_model(self, args):
-        model_name =  args.model_type
-        num_genomic_features = 2
-        ModelClass = getattr(corigami_models, model_name)
-        model = ModelClass(num_genomic_features, mid_hidden = 256)
+        model = newmodel.ConvTransModel(False,16)
         return model
 
 if __name__ == '__main__':
