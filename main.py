@@ -222,7 +222,7 @@ class TrainModule(pl.LightningModule):
 
     def get_dataset(self, args, mode):
 
-        dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.window,val_chr=args.val_chr,feature=args.feature,itype=args.itype,mode=mode)
+        dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.window,val_chr=args.val_chr,feature=args.feature,itype=args.itpe,mode=mode)
 
         # Record length for printing validation image
         if mode == 'val':
