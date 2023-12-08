@@ -77,16 +77,16 @@ class ChromosomeDataset(Dataset):
 
 
 
-data_dir = '../../My Drive/corigamidata'
-window = 16
-length = 128
-val_chr = 1
-batch_size=256
-feature='DNA'
-itype='Outward'
-train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='val')
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
-sampled=next(iter(train_loader))
-print(sampled[1].shape,sampled[0].shape)
-# data=torch.load('../../My Drive/corigamidata/1_16_128_DNA_Outward_contact_matrix.pt')
-# print(data.shape)
+# data_dir = '../../My Drive/corigamidata'
+# window = 16
+# length = 128
+# val_chr = 1
+# batch_size=256
+# feature='DNA'
+# itype='Outward'
+# train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='val')
+# train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+# sampled=next(iter(train_loader))
+# print(sampled[1].shape,sampled[0].shape)
+# # data=torch.load('../../My Drive/corigamidata/1_16_128_DNA_Outward_contact_matrix.pt')
+# # print(data.shape)
