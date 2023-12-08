@@ -3,7 +3,6 @@ import torch.nn as nn
 import numpy as np
 import copy
 import math
-from torchsummary import summary
 
 class ConvBlock(nn.Module):
     def __init__(self, size, stride = 2, hidden_in = 64, hidden = 64):
