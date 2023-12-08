@@ -15,10 +15,12 @@ import torch
 from torch.utils.data import Dataset
 
 class ChromosomeDataset(Dataset):
-    def __init__(self, data_dir, window, length, val_chr, mode='train'):
+    def __init__(self, data_dir, window, length, val_chr,feature,itype,mode='train'):
         self.data_dir = data_dir
         self.window = window
         self.length = length
+        self.feature=feature
+        self.itype=itype
         self.val_chr = val_chr
         self.mode = mode  # 'train' or 'val'
         self.feature_matrices = []
@@ -30,8 +32,8 @@ class ChromosomeDataset(Dataset):
                 if chr_num == self.val_chr:
                     continue  # Skip the validation chromosome
                 
-                feature_file = f"{chr_num}_{window}_{length}_feature_matrix.pt"
-                contact_file = f"{chr_num}_{window}_{length}_contact_matrix.pt"
+                feature_file = f"{chr_num}_{window}_{length}_{feature}_{itype}_feature_matrix.pt"
+                contact_file = f"{chr_num}_{window}_{length}_{feature}_{itype}_contact_matrix.pt"
                 feature_path = os.path.join(self.data_dir, feature_file)
                 contact_path = os.path.join(self.data_dir, contact_file)
 
@@ -44,6 +46,9 @@ class ChromosomeDataset(Dataset):
             # Concatenate all training feature and contact matrices
             self.feature_matrices = torch.cat(self.feature_matrices, dim=0)
             self.contact_matrices = torch.cat(self.contact_matrices, dim=0)
+            self.contact_matrices=self.contact_matrices.view(-1, 16, 16)
+            self.feature_matrices=self.feature_matrices.view(-1, 4, 2048)
+
         elif self.mode == 'val':
             feature_file = f"{val_chr}_{window}_{length}_feature_matrix.pt"
             contact_file = f"{val_chr}_{window}_{length}_contact_matrix.pt"
@@ -51,6 +56,9 @@ class ChromosomeDataset(Dataset):
             contact_path = os.path.join(self.data_dir, contact_file)
             self.feature_matrices = torch.load(feature_path)
             self.contact_matrices = torch.load(contact_path)
+            self.contact_matrices=self.contact_matrices.view(-1, 16, 16)
+            self.feature_matrices=self.feature_matrices.view(-1, 4, 2048)
+
 
 
     def __len__(self):
@@ -61,3 +69,15 @@ class ChromosomeDataset(Dataset):
             return self.feature_matrices[idx], self.contact_matrices[idx]
 
 
+
+# data_dir = '../../Desktop/processed'
+# window = 16
+# length = 128
+# val_chr = 1
+# batch_size=256
+# feature='DNA'
+# itype='Outward'
+# train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='train')
+# train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+# sampled=next(iter(train_loader))
+# print(sampled[1].shape,sampled[0].shape)
