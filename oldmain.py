@@ -39,7 +39,7 @@ val_size = len(dataset) - train_size
 
 # Randomly split the dataset into training and validation sets
 train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-
+batch_size=64
 # Step 4: Create DataLoaders
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True,drop_last=True)
 val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False,drop_last=True)
@@ -80,7 +80,7 @@ for epoch in range(num_epochs):
     for batch in train_loader:
         # Get data to cuda if possible
         inputs, targets = batch
-        inputs = inputs.transpose(1, 2).contiguous()
+        inputs = inputs.view(batch_size, 4, -1).transpose(1, 2).contiguous()
         if torch.cuda.is_available():
             inputs, targets = inputs.float().cuda(), targets.float().cuda()
 
@@ -105,7 +105,7 @@ for epoch in range(num_epochs):
     with torch.no_grad():
         for batch in val_loader:
             inputs, targets = batch
-            inputs = inputs.transpose(1, 2).contiguous()
+            inputs = inputs.view(batch_size, 4, -1).transpose(1, 2).contiguous()
             if torch.cuda.is_available():
                 inputs, targets = inputs.float().cuda(), targets.float().cuda()
 
@@ -130,7 +130,7 @@ all_untrain = []
 with torch.no_grad():
     for batch in val_loader:
         inputs, targets = batch
-        inputs = inputs.transpose(1, 2).contiguous()
+        inputs = inputs.view(batch_size, 4, -1).transpose(1, 2).contiguous()
         if torch.cuda.is_available():
             inputs = inputs.float().cuda()
 
