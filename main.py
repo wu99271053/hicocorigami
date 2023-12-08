@@ -7,6 +7,7 @@ import pytorch_lightning.callbacks as callbacks
 import newmodel
 from dataset import ChromosomeDataset
 import pl_bolts
+import copy 
 
 
 def main():
@@ -106,7 +107,7 @@ def init_training(args):
 
     # Logger
     #csv_logger = pl.loggers.CSVLogger(save_dir = f'{args.run_save_path}/csv')
-    logger = pl.loggers.TensorBoardLogger(save_dir = f'{args.run_save_path}/')
+    logger = pl.loggers.TensorBoardLogger(save_dir = f'{args.run_save_path}/tensorboard')
     all_loggers = logger
     
     # Assign seed
@@ -133,6 +134,10 @@ class TrainModule(pl.LightningModule):
         self.model = self.get_model(args)
         self.args = args
         self.save_hyperparameters()
+        self.all_outputs = []
+        self.all_targets = []
+        self.all_untrain = []
+        self.untrain=copy.deepcopy(self.model)
 
     def forward(self, x):
         return self.model(x)
@@ -159,8 +164,14 @@ class TrainModule(pl.LightningModule):
         return ret_metrics
 
     def test_step(self, batch, batch_idx):
-        ret_metrics = self._shared_eval_step(batch, batch_idx)
-        return ret_metrics
+        input,mat=self.proc_batch(batch)
+        outputs = self(input)
+        untrain_outputs = self.untrain(input)
+        self.all_outputs.append(outputs.cpu().view(-1).numpy())
+        self.all_targets.append(mat.view(-1).numpy())
+        self.all_untrain.append(untrain_outputs.cpu().view(-1).numpy())
+
+
 
     def _shared_eval_step(self, batch, batch_idx):
         inputs, mat = self.proc_batch(batch)
@@ -182,6 +193,12 @@ class TrainModule(pl.LightningModule):
         metrics = {'val_loss' : ret_metrics['loss']
                   }
         self.log_dict(metrics, prog_bar=True)
+    
+    def test_epoch_end(self):
+        np.savetxt(f'{self.args.run_save_path}/computed_outputs.csv', np.concatenate(self.all_outputs), delimiter=",")
+        np.savetxt(f'{self.args.run_save_path}/ground_truths.csv', np.concatenate(self.all_targets), delimiter=",")
+        np.savetxt(f'{self.args.run_save_path}/untrained_outputs.csv', np.concatenate(self.all_untrain), delimiter=",")
+
 
     def _shared_epoch_end(self, step_outputs):
         loss = torch.tensor(step_outputs).mean()
