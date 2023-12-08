@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 # Define the loss function and optimizer
 
-data_dir = 'path/to/your/data'
+data_dir = '/content/drive/MyDrive/corigamidata'
 window = 16
 length = 128
 val_chr = 1
