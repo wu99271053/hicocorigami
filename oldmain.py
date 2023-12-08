@@ -19,7 +19,7 @@ length = 128
 val_chr = 1
 feature='DNA'
 itype='Outward'
-batch_size=256
+batch_size=64
 
 train_dataset = ChromosomeDataset(data_dir, window, length,val_chr,feature=feature,itype=itype,mode='train')
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,drop_last=True,num_workers=16)
@@ -31,7 +31,7 @@ model=newmodel.ConvTransModel(False,16)
 untrain=copy.deepcopy(model)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
-
+untrain.to(device)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
