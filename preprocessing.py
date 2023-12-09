@@ -229,7 +229,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    if os.path.exists(f'{args.data_dir}/{args.i_type}_{args.length}.csv') and os.path.exists(f'{args.data_dir}/{args.length}.csv'):
+    if os.path.exists(f'{args.data_dir}/{args.i_type}_{args.length}.csv') and os.path.exists(f'{args.data_dir}/{args.length}.npy'):
         data_matrix=np.load(f'{args.data_dir}/{args.length}.npy')
         df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
         selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
