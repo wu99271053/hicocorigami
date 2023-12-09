@@ -6,6 +6,7 @@ from dataset import ChromosomeDataset
 import copy
 import numpy as np
 from torch.utils.data import DataLoader, Dataset, random_split
+import os
 
 # Assuming your model is defined as 'model'
 # Assuming your data loaders are defined as 'train_loader' and 'val_loader'
