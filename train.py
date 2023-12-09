@@ -122,6 +122,7 @@ def init_training(args):
                             max_epochs = args.trainer_max_epochs
                             )
     val_chr,train_chr=pl_module.split_chromosomes(1)
+    print(val_chr,train_chr)
     trainloader = pl_module.get_dataloader(args, 'train',train_chr)
     valloader = pl_module.get_dataloader(args, 'val',val_chr)
     testloader = pl_module.get_dataloader(args, 'val',val_chr)
