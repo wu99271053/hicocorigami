@@ -236,7 +236,8 @@ if __name__ == "__main__":
         selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
 
     
-    else: 
+    else:
+        print("startProcessing ")
         selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
         data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
 
