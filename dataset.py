@@ -16,8 +16,8 @@ class ChromosomeDataset(Dataset):
         self.length = length
         self.itype = itype
 
-        self.x = torch.empty((0,))
-        self.y = torch.empty((0,))
+        self.x = []
+        self.y = []
 
         # Ensure chr is a list even if it's a single value
         if not isinstance(chr, list):
@@ -44,11 +44,10 @@ class ChromosomeDataset(Dataset):
             contact_data_path = os.path.join(self.data_dir, contact_file_name)
             contact = torch.load(contact_data_path)
             feature = torch.load(feature_data_path)
-            print(len(feature),len(contact))
 
             # Concatenate the new data to the existing tensor
-            self.x = torch.cat((self.x, feature), dim=0)
-            self.y = torch.cat((self.y, contact), dim=0)
+            self.x.extend(feature)
+            self.y.extend(contact)
         
     def __len__(self):
             return self.x.shape
