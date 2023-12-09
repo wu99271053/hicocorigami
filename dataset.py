@@ -52,9 +52,9 @@ def split_chromosomes(input_chr):
 
 val_chr,train_chr=split_chromosomes(1)
 
-train_dataset = ChromosomeDataset(data_dir='processed', window=16, length=128, chr=train_chr, itype='Outward')
+train_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=train_chr, itype='Outward')
 
-val_dataset = ChromosomeDataset(data_dir='processed', window=16, length=128, chr=val_chr, itype='Outward')
+val_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=val_chr, itype='Outward')
 
 train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=256,shuffle=True,drop_last=True)
 val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=256,shuffle=False,drop_last=True)
