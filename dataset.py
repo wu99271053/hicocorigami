@@ -26,7 +26,7 @@ class ChromosomeDataset(Dataset):
             data_file_name = f"{i}_{window}_{length}_{itype}_data.pt"
             data_path = os.path.join(self.data_dir, data_file_name)
             data = torch.load(data_path)
-            data_list.append(data)
+            data_list.extend(data)
 
         # Combine data from all chromosomes if there are multiple, else use single chromosome data
         if len(data_list) > 1:
