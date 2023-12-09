@@ -55,30 +55,30 @@ class ChromosomeDataset(Dataset):
     def __getitem__(self, idx):
             return self.x[idx], self.y[idx]
 
-data=torch.load("processed/1_256_128_Outward_data.pt")
-print(data.shape)
+# data=torch.load("processed/1_256_128_Outward_data.pt")
+# print(data.shape)
 
     # Implement __len__ and __getitem__ as per your requirement
 
 # Example usage
 
-# def split_chromosomes(input_chr):
-#     all_chromosomes = list(range(1, 17))
-#     return ([input_chr], [chr for chr in all_chromosomes if chr != input_chr])
+def split_chromosomes(input_chr):
+    all_chromosomes = list(range(1, 17))
+    return ([input_chr], [chr for chr in all_chromosomes if chr != input_chr])
 
-# val_chr,train_chr=split_chromosomes(1)
+val_chr,train_chr=split_chromosomes(1)
 
-# train_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=[1,3], itype='Outward')
+train_dataset = ChromosomeDataset(data_dir='processed', window=128, length=128, chr=[1,3], itype='Outward')
 
-# val_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=[2], itype='Outward')
+val_dataset = ChromosomeDataset(data_dir='processed', window=128, length=128, chr=[2], itype='Outward')
 
-# train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=256,shuffle=True,drop_last=True)
-# val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=256,shuffle=False,drop_last=True)
-# sampled_train_x,sampled_train_y=next(iter(train_loader))
-# sampled_val_x,sampled_val_y=next(iter(val_loader))
+train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=64,shuffle=True,drop_last=True)
+val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=64,shuffle=False,drop_last=True)
+sampled_train_x,sampled_train_y=next(iter(train_loader))
+sampled_val_x,sampled_val_y=next(iter(val_loader))
 
-# #print(sampled_train_x,sampled_train_y,sampled_val_y,sampled_val_y)
-# print(sampled_train_x.shape,sampled_train_y.shape,sampled_val_x.shape,sampled_val_y.shape)
+#print(sampled_train_x,sampled_train_y,sampled_val_y,sampled_val_y)
+print(sampled_train_x.shape,sampled_train_y.shape,sampled_val_x.shape,sampled_val_y.shape)
 
 
 
