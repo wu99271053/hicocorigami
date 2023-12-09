@@ -228,19 +228,13 @@ if __name__ == "__main__":
                         help='processed data and saved checkpoint')
     
     args = parser.parse_args()
-    csv_file_path = f'{args.data_dir}/{args.i_type}_{args.length}.csv'
-    npy_file_path = f'{args.data_dir}/{args.length}.npy'
 
-    if os.path.exists(csv_file_path) and os.path.exists(npy_file_path):
-        print("data exist")
-        data_matrix=np.load(f'{args.data_dir}/{args.length}.npy')
-        df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
-        selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
+    data_matrix=np.load(f'{args.data_dir}/{args.length}.npy')
+    df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
+    selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
 
     
-    else:
-        print("startProcessing ")
-        selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
-        data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
+    #selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
+    #data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
 
     chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_id,window_size=args.window)
