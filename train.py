@@ -263,9 +263,9 @@ class TrainModule(pl.LightningModule):
         model = newmodel.ConvTransModel(True,128)
         return model
     
-    def split_chromosomes(self,chr):
+    def split_chromosomes(self,selected_chr):
         all_chromosomes = list(range(1, 17))
-        return ([chr], [chr for chr in all_chromosomes if chr != chr])
+        return ([selected_chr], [chr for chr in all_chromosomes if chr != selected_chr])
 
 
 if __name__ == '__main__':
