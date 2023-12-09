@@ -15,25 +15,33 @@ class ChromosomeDataset(Dataset):
         self.window = window
         self.length = length
         self.itype = itype
+        
 
         # Ensure chr is a list even if it's a single value
         if not isinstance(chr, list):
             chr = [chr]
 
         # Load data for each chromosome and store in a list
-        data_list = []
+        # data_list = []
+        # for i in chr:
+        #     data_file_name = f"{i}_{window}_{length}_{itype}_data.pt"
+        #     data_path = os.path.join(self.data_dir, data_file_name)
+        #     data = torch.load(data_path)
+        #     data_list.extend(data)
+
+        # # Combine data from all chromosomes if there are multiple, else use single chromosome data
+        # if len(data_list) > 1:
+        #     # Assuming data can be concatenated along the first dimension
+        #     self.data = torch.cat(data_list, dim=0)
+        # else:
+        #     self.data = data_list[0]
         for i in chr:
             data_file_name = f"{i}_{window}_{length}_{itype}_data.pt"
             data_path = os.path.join(self.data_dir, data_file_name)
             data = torch.load(data_path)
-            data_list.extend(data)
 
-        # Combine data from all chromosomes if there are multiple, else use single chromosome data
-        if len(data_list) > 1:
-            # Assuming data can be concatenated along the first dimension
-            self.data = torch.cat(data_list, dim=0)
-        else:
-            self.data = data_list[0]
+            # Concatenate the new data to the existing tensor
+            self.data = torch.cat((self.data, data), dim=0)
         
     def __len__(self):
             return len(self.data[0])
