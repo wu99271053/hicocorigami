@@ -124,7 +124,7 @@ def init_training(args):
     val_chr,train_chr=pl_module.split_chromosomes(1)
     trainloader = pl_module.get_dataloader(args, 'train',val_chr)
     valloader = pl_module.get_dataloader(args, 'val',train_chr)
-    testloader = pl_module.get_dataloader(args, 'val')
+    testloader = pl_module.get_dataloader(args, 'val',val_chr)
     print("abc")
     pl_trainer.fit(pl_module, trainloader, valloader,)
 
