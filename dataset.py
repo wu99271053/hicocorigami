@@ -14,66 +14,49 @@ import os
 import torch
 from torch.utils.data import Dataset
 
+import os
+import torch
+from torch.utils.data import Dataset
+
 class ChromosomeDataset(Dataset):
-    def __init__(self, data_dir, window, length, val_chr,feature,itype,mode='train'):
+    def __init__(self, data_dir, window, length, chr, itype):
         self.data_dir = data_dir
         self.window = window
         self.length = length
-        self.feature=feature
-        self.itype=itype
-        self.val_chr = val_chr
-        self.mode = mode  # 'train' or 'val'
-        self.feature_matrices = []
-        self.contact_matrices = []
+        self.itype = itype
 
-        # Load and combine data for training
-        if self.mode == 'train':
-            for chr_num in range(1, 17):  # Assuming 16 chromosomes
-                if chr_num == self.val_chr:
-                    continue  # Skip the validation chromosome
-                
-                feature_file = f"{chr_num}_{window}_{length}_{feature}_{itype}_feature_matrix.pt"
-                contact_file = f"{chr_num}_{window}_{length}_{feature}_{itype}_contact_matrix.pt"
-                feature_path = os.path.join(self.data_dir, feature_file)
-                contact_path = os.path.join(self.data_dir, contact_file)
+        # Ensure chr is a list even if it's a single value
+        if not isinstance(chr, list):
+            chr = [chr]
 
-                if os.path.exists(feature_path) and os.path.exists(contact_path):
-                    feature_matrix = torch.load(feature_path)
-                    contact_matrix = torch.load(contact_path)
-                    self.feature_matrices.append(feature_matrix)
-                    self.contact_matrices.append(contact_matrix)
-            
-            # Concatenate all training feature and contact matrices
-            self.feature_matrices = torch.cat(self.feature_matrices, dim=0)
-            self.contact_matrices = torch.cat(self.contact_matrices, dim=0)
-            self.contact_matrices=self.contact_matrices.view(-1, window, window)
-            if feature=='DNA':
-                self.feature_matrices=self.feature_matrices.view(-1, 4, length*window)
-            else:
-                self.feature_matrices=self.feature_matrices.view(-1, 30, length*window)
+        # Load data for each chromosome and store in a list
+        data_list = []
+        for i in chr:
+            data_file_name = f"{i}_{window}_{length}_{itype}_data.pt"
+            data_path = os.path.join(self.data_dir, data_file_name)
+            data = torch.load(data_path)
+            data_list.append(data)
+
+        # Combine data from all chromosomes if there are multiple, else use single chromosome data
+        if len(data_list) > 1:
+            # Assuming data can be concatenated along the first dimension
+            self.data = torch.cat(data_list, dim=0)
+        else:
+            self.data = data_list[0]
+        
+        def __len__(self):
+            return self.data[0].size(0)
+
+        def __getitem__(self, idx):
+            return self.data[0][idx], self.data[1][idx]
 
 
-        elif self.mode == 'val':
-            feature_file = f"{val_chr}_{window}_{length}_{feature}_{itype}_feature_matrix.pt"
-            contact_file = f"{val_chr}_{window}_{length}_{feature}_{itype}_contact_matrix.pt"
-            feature_path = os.path.join(self.data_dir, feature_file)
-            contact_path = os.path.join(self.data_dir, contact_file)
-            self.feature_matrices = torch.load(feature_path)
-            self.contact_matrices = torch.load(contact_path)
-            self.contact_matrices=self.contact_matrices.view(-1, window, window)
-            if feature=='DNA':
-                self.feature_matrices=self.feature_matrices.view(-1, 4, window*length)
-            else:
-                self.feature_matrices=self.feature_matrices.view(-1, 30, length*window)
+    # Implement __len__ and __getitem__ as per your requirement
+
+# Example usage
+dataset = ChromosomeDataset(data_dir='path/to/data', window=16, length=128, chr=[1, 2, 3], itype='some_type')
 
 
-
-
-    def __len__(self):
-            return self.feature_matrices.size(0)
-
-    def __getitem__(self, idx):
-            return self.feature_matrices[idx], self.contact_matrices[idx]
 
 
 
