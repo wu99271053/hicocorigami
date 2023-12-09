@@ -49,7 +49,7 @@ class ChromosomeDataset(Dataset):
     def __getitem__(self, idx):
             return self.data[0][idx], self.data[1][idx]
 
-data=torch.load("1_256_128_Outward_data.pt")
+data=torch.load("processed/1_256_128_Outward_data.pt")
 print(data.shape)
 
     # Implement __len__ and __getitem__ as per your requirement
