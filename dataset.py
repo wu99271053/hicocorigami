@@ -15,7 +15,9 @@ class ChromosomeDataset(Dataset):
         self.window = window
         self.length = length
         self.itype = itype
-        self.data = torch.empty((0,))
+
+        self.x = torch.empty((0,))
+        self.y = torch.empty((0,))
 
         # Ensure chr is a list even if it's a single value
         if not isinstance(chr, list):
@@ -36,18 +38,22 @@ class ChromosomeDataset(Dataset):
         # else:
         #     self.data = data_list[0]
         for i in chr:
-            data_file_name = f"{i}_{window}_{length}_{itype}_data.pt"
-            data_path = os.path.join(self.data_dir, data_file_name)
-            data = torch.load(data_path)
+            contact_file_name = f"{i}_{window}_{length}_{itype}_contact.pt"
+            feature_file_name  = f"{i}_{window}_{length}_{itype}_feature.pt"
+            feature_data_path = os.path.join(self.data_dir, feature_file_name)
+            contact_data_path = os.path.join(self.data_dir, contact_file_name)
+            contact = torch.load(contact_data_path)
+            feature = torch.load(feature_data_path)
 
             # Concatenate the new data to the existing tensor
-            self.data = torch.cat((self.data, data), dim=0)
+            self.x = torch.cat((self.x, feature), dim=0)
+            self.y = torch.cat((self.y, contact), dim=0)
         
     def __len__(self):
-            return len(self.data[0])
+            return self.x.shape
 
     def __getitem__(self, idx):
-            return self.data[0][idx], self.data[1][idx]
+            return self.x[idx], self.y[idx]
 
 data=torch.load("processed/1_256_128_Outward_data.pt")
 print(data.shape)
