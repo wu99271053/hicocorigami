@@ -237,4 +237,4 @@ if __name__ == "__main__":
     #selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
     #data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
 
-    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_id,window_size=args.window)
+    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_ids,window_size=args.window)
