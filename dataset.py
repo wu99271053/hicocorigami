@@ -44,7 +44,7 @@ class ChromosomeDataset(Dataset):
             contact_data_path = os.path.join(self.data_dir, contact_file_name)
             contact = torch.load(contact_data_path)
             feature = torch.load(feature_data_path)
-            print(feature.shape,contact.shape)
+            print(len(feature),len(contact))
 
             # Concatenate the new data to the existing tensor
             self.x = torch.cat((self.x, feature), dim=0)
