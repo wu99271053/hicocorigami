@@ -183,7 +183,7 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
             if start_id in selected_id:
                 continue
 
-            feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1)
+            feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
             fake_window_size=200
 
 
@@ -199,11 +199,11 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                     #value = subset_df.loc[(subset_df['id1'] == id1) & (subset_df['id2'] == id2), 'value']
                     contact_matrix[i, j] = contact_matrix[j, i]=value
             
-            contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True)
+            contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
             
             contact_matrices.append(contact_matrix_resize)
             feature_matrices.append(feature_matrix_resize)
-            
+
         torch.save(contact_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_contact.pt')
         torch.save(feature_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_feature.pt')
 
