@@ -15,7 +15,7 @@ class ChromosomeDataset(Dataset):
         self.window = window
         self.length = length
         self.itype = itype
-        
+        self.data = torch.empty((0,))
 
         # Ensure chr is a list even if it's a single value
         if not isinstance(chr, list):
