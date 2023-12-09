@@ -184,7 +184,7 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                 continue
 
             feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
-            fake_window_size=200
+            fake_window_size=100
 
 
             contact_matrix = np.zeros((fake_window_size, fake_window_size))
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='C.Origami_like Training Module.')
     parser.add_argument('--raw_dir', default='../../Desktop/raw',
                         help='Path to the raw data')
-    parser.add_argument('--window', default=256,type=int,
+    parser.add_argument('--window', default=128,type=int,
                         help='size of heatmap')
     parser.add_argument('--length',default=128,type=int,
                         help='length of Nucleosomal DNA')
