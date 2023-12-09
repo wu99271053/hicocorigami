@@ -24,7 +24,7 @@ def init_parser():
   parser.add_argument('--seed', dest='run_seed', default=2077,
                         type=int,
                         help='Random seed for training')
-  parser.add_argument('--window', dest='window', default=16,
+  parser.add_argument('--window', dest='window', default=128,
                         type=int,
                         help='Random seed for training')
   parser.add_argument('--length', dest='length', default=128,
@@ -33,8 +33,7 @@ def init_parser():
   parser.add_argument('--val_chr', dest='val_chr', default=1,
                         type=int,
                         help='Random seed for training')
-  parser.add_argument('--feature', dest='feature', default='DNA',
-                        help='Path to the model checkpoint')
+
   parser.add_argument('--itype', dest='itpe', default='Outward',
                         help='Path to the model checkpoint')
 
@@ -73,7 +72,7 @@ def init_parser():
                         help='Number of GPUs to use')
 
   # Dataloader Parameters
-  parser.add_argument('--batch-size', dest='dataloader_batch_size', default=64, 
+  parser.add_argument('--batch-size', dest='dataloader_batch_size', default=16, 
                         type=int,
                         help='Batch size')
   
@@ -81,7 +80,7 @@ def init_parser():
                         action='store_false',
                         help='Using ddp, adjust batch size')
   
-  parser.add_argument('--num-workers', dest='dataloader_num_workers', default=16,
+  parser.add_argument('--num-workers', dest='dataloader_num_workers', default=8,
                         type=int,
                         help='Dataloader workers')
 
@@ -122,8 +121,9 @@ def init_training(args):
                                          lr_monitor],
                             max_epochs = args.trainer_max_epochs
                             )
-    trainloader = pl_module.get_dataloader(args, 'train')
-    valloader = pl_module.get_dataloader(args, 'val')
+    val_chr,train_chr=pl_module.split_chromosomes(1)
+    trainloader = pl_module.get_dataloader(args, 'train',val_chr)
+    valloader = pl_module.get_dataloader(args, 'val',train_chr)
     testloader = pl_module.get_dataloader(args, 'val')
     pl_trainer.fit(pl_module, trainloader, valloader,)
 
@@ -220,19 +220,15 @@ class TrainModule(pl.LightningModule):
         }
         return {'optimizer' : optimizer, 'lr_scheduler' : scheduler_config}
 
-    def get_dataset(self, args, mode):
+    def get_dataset(self, args,chr):
 
-        dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.length,val_chr=args.val_chr,feature=args.feature,itype=args.itpe,mode=mode)
+        dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.length,chr=chr,itype=args.itpe)
 
-        # Record length for printing validation image
-        if mode == 'val':
-            self.val_length = len(dataset) / args.dataloader_batch_size
-            print('Validation loader length:', self.val_length)
 
         return dataset
 
-    def get_dataloader(self, args, mode):
-        dataset = self.get_dataset(args, mode)
+    def get_dataloader(self, args, mode,chr):
+        dataset = self.get_dataset(args,chr)
 
         if mode == 'train':
             shuffle = True
@@ -260,9 +256,14 @@ class TrainModule(pl.LightningModule):
         )
         return dataloader
 
-    def get_model(self, args):
-        model = newmodel.ConvTransModel(False,16)
+    def get_model(self):
+        model = newmodel.ConvTransModel(False,128)
         return model
+    
+    def split_chromosomes(self,args):
+        all_chromosomes = list(range(1, 17))
+        return ([args.val_chr], [chr for chr in all_chromosomes if chr != args.val_chr])
+
 
 if __name__ == '__main__':
     main()
