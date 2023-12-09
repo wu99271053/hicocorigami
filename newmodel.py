@@ -294,8 +294,8 @@ class ConvModel(nn.Module):
         return x.transpose(1, 2).contiguous()
 
     def diagonalize(self, x):
-        x_i = x.unsqueeze(2).repeat(1, 1, 16, 1)
-        x_j = x.unsqueeze(3).repeat(1, 1, 1, 16)
+        x_i = x.unsqueeze(2).repeat(1, 1, 128, 1)
+        x_j = x.unsqueeze(3).repeat(1, 1, 1, 128)
         input_map = torch.cat([x_i, x_j], dim = 1)
         return input_map
 
