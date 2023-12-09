@@ -90,7 +90,7 @@ val_chr,train_chr=split_chromosomes(1)
 train_dataset = ChromosomeDataset(data_dir='processed', window=128, length=128, chr=train_chr, itype='Outward')
 
 val_dataset = ChromosomeDataset(data_dir='processed', window=128, length=128, chr=val_chr, itype='Outward')
-batch_size=64
+batch_size=8
 train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=batch_size,shuffle=True,drop_last=True)
 val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=batch_size,shuffle=False,drop_last=True)
 # Step 3: Split the data
