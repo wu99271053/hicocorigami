@@ -52,7 +52,7 @@ def split_chromosomes(input_chr):
 
 val_chr,train_chr=split_chromosomes(1)
 
-train_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=[1], itype='Outward')
+train_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=[1,3], itype='Outward')
 
 val_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, chr=[2], itype='Outward')
 
