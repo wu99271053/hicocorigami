@@ -59,10 +59,10 @@ val_dataset = ChromosomeDataset(data_dir='processed', window=256, length=128, ch
 train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=256,shuffle=True,drop_last=True)
 val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=256,shuffle=False,drop_last=True)
 sampled_train_x,sampled_train_y=next(iter(train_loader))
-sampled_val_y,sampled_val_y=next(iter(val_loader))
+sampled_val_x,sampled_val_y=next(iter(val_loader))
 
 #print(sampled_train_x,sampled_train_y,sampled_val_y,sampled_val_y)
-print(sampled_train_x.shape,sampled_train_y.shape,sampled_val_y.shape,sampled_val_y.shape)
+print(sampled_train_x.shape,sampled_train_y.shape,sampled_val_x.shape,sampled_val_y.shape)
 
 
 
