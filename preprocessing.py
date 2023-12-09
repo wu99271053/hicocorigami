@@ -233,8 +233,7 @@ if __name__ == "__main__":
         data_matrix=np.load(f'{args.data_dir}/{args.length}.npy')
         df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
         selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
-        selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
-        data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
+
     
     else: 
         selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
