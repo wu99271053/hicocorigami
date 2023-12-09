@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 import pytorch_lightning.callbacks as callbacks
 import newmodel
 from dataset import ChromosomeDataset
-import pl_bolts
+#import pl_bolts
 import copy 
 
 
@@ -209,8 +209,9 @@ class TrainModule(pl.LightningModule):
         optimizer = torch.optim.Adam(self.parameters(), 
                                      lr = 2e-4,
                                      weight_decay = 0)
+        scheduler=torch.optim.lr_scheduler.MultiStepLR(optimizer,milestones=[70,80],gamma=0.1)
 
-        scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=10, max_epochs=self.args.trainer_max_epochs)
+        # scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=10, max_epochs=self.args.trainer_max_epochs)
         scheduler_config = {
             'scheduler': scheduler,
             'interval': 'epoch',
