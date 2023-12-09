@@ -204,8 +204,8 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
             contact_matrices.append(contact_matrix_resize)
             feature_matrices.append(feature_matrix_resize)
 
-        torch.save(contact_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_contact.pt')
-        torch.save(feature_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_feature.pt')
+        torch.save((feature_matrices,contact_matrices), f'{data_dir}/{chr}_{window_size}_{length}_{itype}_data.pt')
+        #torch.save(feature_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_feature.pt')
 
 
     
