@@ -102,7 +102,7 @@ for epoch in range(num_epochs):
     for batch in train_loader:
         # Get data to cuda if possible
         inputs, targets = batch
-        inputs = inputs.transpose(1, 2).contiguous()
+        inputs = inputs.view(batch_size,4,-1).transpose(1, 2).contiguous()
         if torch.cuda.is_available():
             inputs, targets = inputs.float().cuda(), targets.float().cuda()
 
@@ -127,7 +127,8 @@ for epoch in range(num_epochs):
     with torch.no_grad():
         for batch in val_loader:
             inputs, targets = batch
-            inputs = inputs.transpose(1, 2).contiguous()
+            inputs = inputs.view(batch_size,4,-1).transpose(1, 2).contiguous()
+
             if torch.cuda.is_available():
                 inputs, targets = inputs.float().cuda(), targets.float().cuda()
 
@@ -152,7 +153,8 @@ all_untrain = []
 with torch.no_grad():
     for batch in val_loader:
         inputs, targets = batch
-        inputs = inputs.view.transpose(1, 2).contiguous()
+        inputs = inputs.view(batch_size,4,-1).transpose(1, 2).contiguous()
+
         if torch.cuda.is_available():
             inputs = inputs.float().cuda()
 
