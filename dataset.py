@@ -22,21 +22,6 @@ class ChromosomeDataset(Dataset):
         # Ensure chr is a list even if it's a single value
         if not isinstance(chr, list):
             chr = [chr]
-
-        # Load data for each chromosome and store in a list
-        # data_list = []
-        # for i in chr:
-        #     data_file_name = f"{i}_{window}_{length}_{itype}_data.pt"
-        #     data_path = os.path.join(self.data_dir, data_file_name)
-        #     data = torch.load(data_path)
-        #     data_list.extend(data)
-
-        # # Combine data from all chromosomes if there are multiple, else use single chromosome data
-        # if len(data_list) > 1:
-        #     # Assuming data can be concatenated along the first dimension
-        #     self.data = torch.cat(data_list, dim=0)
-        # else:
-        #     self.data = data_list[0]
         for i in chr:
             contact_file_name = f"{i}_{window}_{length}_{itype}_contact.pt"
             feature_file_name  = f"{i}_{window}_{length}_{itype}_feature.pt"
@@ -54,13 +39,6 @@ class ChromosomeDataset(Dataset):
 
     def __getitem__(self, idx):
             return self.x[idx], self.y[idx]
-
-# data=torch.load("processed/1_256_128_Outward_data.pt")
-# print(data.shape)
-
-    # Implement __len__ and __getitem__ as per your requirement
-
-# Example usage
 
 def split_chromosomes(input_chr):
     all_chromosomes = list(range(1, 17))

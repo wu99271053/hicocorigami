@@ -15,41 +15,83 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 
 # Load your data
-feature_matrix = torch.load('/content/drive/My Drive/jokedata/feature_matrix.pt')
-contact_matrix = torch.load('/content/drive/My Drive/jokedata/contact_matrix.pt')
+# feature_matrix = torch.load('/content/drive/My Drive/jokedata/feature_matrix.pt')
+# contact_matrix = torch.load('/content/drive/My Drive/jokedata/contact_matrix.pt')
 
-# Define your custom dataset class
-class MyDataset(Dataset):
-    def __init__(self, features, labels):
-        self.features = features
-        self.labels = labels
+# # Define your custom dataset class
+# class MyDataset(Dataset):
+#     def __init__(self, features, labels):
+#         self.features = features
+#         self.labels = labels
 
+#     def __len__(self):
+#         return len(self.features)
+
+#     def __getitem__(self, idx):
+#         return self.features[idx], self.labels[idx]
+
+# # Calculate the sizes for training and validation sets
+# val_size = int(0.2 * len(feature_matrix))
+# train_size = len(feature_matrix) - val_size
+
+# # Split the dataset into training and validation sets
+# train_features = feature_matrix[val_size:]
+# train_labels = contact_matrix[val_size:]
+# val_features = feature_matrix[:val_size]
+# val_labels = contact_matrix[:val_size]
+
+# # Create dataset instances
+# train_dataset = MyDataset(train_features, train_labels)
+# val_dataset = MyDataset(val_features, val_labels)
+
+# # Create DataLoaders
+# batch_size = 64
+# train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
+# val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
+
+class ChromosomeDataset(Dataset):
+    def __init__(self, data_dir, window, length, chr, itype):
+        self.data_dir = data_dir
+        self.window = window
+        self.length = length
+        self.itype = itype
+
+        self.x = []
+        self.y = []
+
+        # Ensure chr is a list even if it's a single value
+        if not isinstance(chr, list):
+            chr = [chr]
+        for i in chr:
+            contact_file_name = f"{i}_{window}_{length}_{itype}_contact.pt"
+            feature_file_name  = f"{i}_{window}_{length}_{itype}_feature.pt"
+            feature_data_path = os.path.join(self.data_dir, feature_file_name)
+            contact_data_path = os.path.join(self.data_dir, contact_file_name)
+            contact = torch.load(contact_data_path)
+            feature = torch.load(feature_data_path)
+
+            # Concatenate the new data to the existing tensor
+            self.x.extend(feature)
+            self.y.extend(contact)
+        
     def __len__(self):
-        return len(self.features)
+            return len(self.x)
 
     def __getitem__(self, idx):
-        return self.features[idx], self.labels[idx]
+            return self.x[idx], self.y[idx]
 
-# Calculate the sizes for training and validation sets
-val_size = int(0.2 * len(feature_matrix))
-train_size = len(feature_matrix) - val_size
+def split_chromosomes(input_chr):
+    all_chromosomes = list(range(1, 17))
+    return ([input_chr], [chr for chr in all_chromosomes if chr != input_chr])
 
-# Split the dataset into training and validation sets
-train_features = feature_matrix[val_size:]
-train_labels = contact_matrix[val_size:]
-val_features = feature_matrix[:val_size]
-val_labels = contact_matrix[:val_size]
+val_chr,train_chr=split_chromosomes(1)
 
-# Create dataset instances
-train_dataset = MyDataset(train_features, train_labels)
-val_dataset = MyDataset(val_features, val_labels)
+train_dataset = ChromosomeDataset(data_dir='processed', window=128, length=128, chr=train_chr, itype='Outward')
 
-# Create DataLoaders
-batch_size = 64
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
-
-
+val_dataset = ChromosomeDataset(data_dir='processed', window=128, length=128, chr=val_chr, itype='Outward')
+batch_size=64
+train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=batch_size,shuffle=True,drop_last=True)
+val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=batch_size,shuffle=False,drop_last=True)
 # Step 3: Split the data
 # Define the proportion for the training set (e.g., 80%)
 # train_size = int(0.8 * len(dataset))
@@ -82,7 +124,7 @@ val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_
 
 
 
-model=newmodel.ConvTransModel(False,16)
+model=newmodel.ConvTransModel(True,128)
 untrain=copy.deepcopy(model)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
@@ -102,7 +144,7 @@ for epoch in range(num_epochs):
     for batch in train_loader:
         # Get data to cuda if possible
         inputs, targets = batch
-        inputs = inputs.view(batch_size,4,-1).transpose(1, 2).contiguous()
+        inputs = inputs.transpose(1, 2).contiguous()
         if torch.cuda.is_available():
             inputs, targets = inputs.float().cuda(), targets.float().cuda()
 
@@ -127,7 +169,7 @@ for epoch in range(num_epochs):
     with torch.no_grad():
         for batch in val_loader:
             inputs, targets = batch
-            inputs = inputs.view(batch_size,4,-1).transpose(1, 2).contiguous()
+            inputs = inputs.transpose(1, 2).contiguous()
 
             if torch.cuda.is_available():
                 inputs, targets = inputs.float().cuda(), targets.float().cuda()
@@ -153,7 +195,7 @@ all_untrain = []
 with torch.no_grad():
     for batch in val_loader:
         inputs, targets = batch
-        inputs = inputs.view(batch_size,4,-1).transpose(1, 2).contiguous()
+        inputs = inputs.transpose(1, 2).contiguous()
 
         if torch.cuda.is_available():
             inputs = inputs.float().cuda()
