@@ -35,10 +35,10 @@ class ChromosomeDataset(Dataset):
         else:
             self.data = data_list[0]
         
-        def __len__(self):
+    def __len__(self):
             return self.data[0].size(0)
 
-        def __getitem__(self, idx):
+    def __getitem__(self, idx):
             return self.data[0][idx], self.data[1][idx]
 
 
