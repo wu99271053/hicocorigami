@@ -1,18 +1,9 @@
 import os
 import torch
 from torch.utils.data import Dataset
-import subprocess
 import os
 import torch
-from torch.utils.data import Dataset, DataLoader,random_split
-from tqdm import tqdm
 
-import os
-import torch
-from torch.utils.data import Dataset
-import os
-import torch
-from torch.utils.data import Dataset
 
 import os
 import torch
@@ -54,9 +45,23 @@ class ChromosomeDataset(Dataset):
     # Implement __len__ and __getitem__ as per your requirement
 
 # Example usage
-dataset = ChromosomeDataset(data_dir='path/to/data', window=16, length=128, chr=[1, 2, 3], itype='some_type')
 
+def split_chromosomes(input_chr):
+    all_chromosomes = list(range(1, 17))
+    return ([input_chr], [chr for chr in all_chromosomes if chr != input_chr])
 
+val_chr,train_chr=split_chromosomes(1)
+
+train_dataset = ChromosomeDataset(data_dir='path/to/data', window=16, length=128, chr=train_chr, itype='Outward')
+
+val_dataset = ChromosomeDataset(data_dir='path/to/data', window=16, length=128, chr=val_chr, itype='Outward')
+
+train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=256,shuffle=True,drop_last=True)
+val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=256,shuffle=False,drop_last=True)
+sampled_train_x,sampled_train_y=next(iter(train_loader))
+sampled_val_y,sampled_val_y=next(iter(val_loader))
+
+print(sampled_train_x,sampled_train_y,sampled_val_y,sampled_val_y)
 
 
 
