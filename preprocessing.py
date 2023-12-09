@@ -228,8 +228,10 @@ if __name__ == "__main__":
                         help='processed data and saved checkpoint')
     
     args = parser.parse_args()
+    csv_file_path = f'{args.data_dir}/{args.i_type}_{args.length}.csv'
+    npy_file_path = f'{args.data_dir}/{args.length}.npy'
 
-    if os.path.exists(f'{args.data_dir}/{args.i_type}_{args.length}.csv') and os.path.exists(f'{args.data_dir}/{args.length}.npy'):
+    if os.path.exists(csv_file_path) and os.path.exists(npy_file_path):
         print("data exist")
         data_matrix=np.load(f'{args.data_dir}/{args.length}.npy')
         df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
