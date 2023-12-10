@@ -137,10 +137,7 @@ class TrainModule(pl.LightningModule):
         self.model = self.get_model()
         self.args = args
         self.save_hyperparameters()
-        self.all_outputs = []
-        self.all_targets = []
-        self.all_untrain = []
-        self.untrain=copy.deepcopy(self.model)
+
 
     def forward(self, x):
         return self.model(x)
