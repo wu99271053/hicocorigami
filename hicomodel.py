@@ -303,6 +303,8 @@ class ConvTransModel(ConvModel):
     
     def __init__(self, num_genomic_features=False, mid_hidden = 256, record_attn = False):
         super(ConvTransModel, self).__init__(num_genomic_features)
+        self.mid_hidden=mid_hidden
+
         print('Initializing ConvTransModel')
         self.encoder = EncoderSplit(num_genomic_features, output_size = mid_hidden, num_blocks = 12)
         if num_genomic_features:
@@ -310,6 +312,12 @@ class ConvTransModel(ConvModel):
         self.attn = AttnModule(hidden = mid_hidden, record_attn = record_attn)
         self.decoder = Decoder(mid_hidden * 2)
         self.record_attn = record_attn
+    
+    def diagonalize(self, x):
+        x_i = x.unsqueeze(2).repeat(1, 1,self.mid_hidden, 1)
+        x_j = x.unsqueeze(3).repeat(1, 1, 1, self.mid_hidden)
+        input_map = torch.cat([x_i, x_j], dim = 1)
+        return input_map
     
     def forward(self, x):
         '''
