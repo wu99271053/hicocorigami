@@ -184,6 +184,8 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                 continue
 
             feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
+            noise = np.random.randn(feature_matrix_resize) * 0.1
+            feature_matrix_resize =  + noise
             fake_window_size=100
 
 

@@ -77,13 +77,13 @@ class EncoderSplit_with_epi(nn.Module):
         self.filter_size = filter_size
         self.conv_start_seq = nn.Sequential(
                                     nn.Conv1d(4, 32, 3, 2, 1),
-                                    nn.BatchNorm1d(16),
+                                    nn.BatchNorm1d(32),
                                     nn.ReLU(),
                                     )
         
         self.conv_start_epi = nn.Sequential(
                                         nn.Conv1d(26, 32, 3, 2, 1),
-                                        nn.BatchNorm1d(16),
+                                        nn.BatchNorm1d(32),
                                         nn.ReLU(),
                                         )
         #hiddens =        [32, 64, 128, 128, 256, 256]
