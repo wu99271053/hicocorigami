@@ -124,7 +124,7 @@ def init_training(args):
                                          lr_monitor],
                             max_epochs = args.trainer_max_epochs
                             )
-    val_chr,train_chr=pl_module.split_chromosomes(1)
+    val_chr,train_chr=pl_module.split_chromosomes(args.val_chr)
     trainloader = pl_module.get_dataloader(args, 'train',train_chr)
     valloader = pl_module.get_dataloader(args, 'val',val_chr)
     pl_trainer.fit(pl_module, trainloader, valloader)
