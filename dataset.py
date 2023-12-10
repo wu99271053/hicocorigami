@@ -72,6 +72,7 @@ with torch.no_grad():
         untrain_outputs = untrain_model(inputs)
         output.append(outputs.cpu().view(-1).numpy())
         target.append(targets.cpu().view(-1).numpy())
+        untrain_output.append(untrain_outputs.cpu().view(-1).numpy())
 
 np.savetxt('computed_outputs.csv', np.concatenate(output), delimiter=",")
 np.savetxt('targets.csv', np.concatenate(target), delimiter=",")
