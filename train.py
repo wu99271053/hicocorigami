@@ -55,11 +55,11 @@ def init_parser():
                         help='CNN with Transformer')
 
   # Training Parameters
-  parser.add_argument('--patience', dest='trainer_patience', default=30,
+  parser.add_argument('--patience', dest='trainer_patience', default=10,
                         type=int,
                         help='Epoches before early stopping')
   
-  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=100,
+  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=30,
                         type=int,
                         help='Max epochs')
   
