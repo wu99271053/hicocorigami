@@ -76,23 +76,25 @@ class EncoderSplit_with_epi(nn.Module):
         super(EncoderSplit_with_epi, self).__init__()
         self.filter_size = filter_size
         self.conv_start_seq = nn.Sequential(
-                                    nn.Conv1d(4, 16, 3, 2, 1),
+                                    nn.Conv1d(4, 32, 3, 2, 1),
                                     nn.BatchNorm1d(16),
                                     nn.ReLU(),
                                     )
         
         self.conv_start_epi = nn.Sequential(
-                                        nn.Conv1d(26, 16, 3, 2, 1),
+                                        nn.Conv1d(26, 32, 3, 2, 1),
                                         nn.BatchNorm1d(16),
                                         nn.ReLU(),
                                         )
-        hiddens =        [32, 64, 128, 128, 256, 256]
-        hidden_ins = [32, 32, 64, 128, 128, 256]
+        #hiddens =        [32, 64, 128, 128, 256, 256]
+        #hidden_ins = [32, 32, 64, 128, 128, 256]
+        hiddens =        [64, 64, 64, 128, 128, 128]
+        hidden_ins = [64, 64, 64, 64, 128,128]
         hiddens_half = (np.array(hiddens) / 2).astype(int)
         hidden_ins_half = (np.array(hidden_ins) / 2).astype(int)
         self.res_blocks_seq = self.get_res_blocks(num_blocks, hidden_ins_half, hiddens_half)
         self.res_blocks_epi = self.get_res_blocks(num_blocks, hidden_ins_half, hiddens_half)
-        self.conv_end = nn.Conv1d(256, output_size, 1)
+        self.conv_end = nn.Conv1d(128, output_size, 1)
 
     def get_res_blocks(self, n, his, hs):
         blocks = []
