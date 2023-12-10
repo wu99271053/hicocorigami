@@ -2,7 +2,7 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 import hicomodel
-from dataset import ChromosomeDataset
+from utils import ChromosomeDataset
 import copy
 import numpy as np
 from torch.utils.data import DataLoader, Dataset, random_split
