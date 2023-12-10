@@ -1,7 +1,7 @@
 import torch
 import torch.optim as optim
 import torch.nn as nn
-import newmodel
+import hicomodel
 from dataset import ChromosomeDataset
 import copy
 import numpy as np
@@ -125,7 +125,7 @@ val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=batch_size,shuffle
 
 
 
-model=newmodel.ConvTransModel(True,128)
+model=hicomodel.ConvTransModel(True,128)
 untrain=copy.deepcopy(model)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)

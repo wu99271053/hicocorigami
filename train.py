@@ -4,10 +4,12 @@ import argparse
 import numpy as np
 import pytorch_lightning as pl
 import pytorch_lightning.callbacks as callbacks
-import newmodel
-from dataset import ChromosomeDataset
+import hicomodel
 import pl_bolts
-import copy 
+import copy
+from torch.utils.data import Dataset
+import os
+
 
 
 def main():
@@ -55,11 +57,11 @@ def init_parser():
                         help='CNN with Transformer')
 
   # Training Parameters
-  parser.add_argument('--patience', dest='trainer_patience', default=10,
+  parser.add_argument('--patience', dest='trainer_patience', default=5,
                         type=int,
                         help='Epoches before early stopping')
   
-  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=30,
+  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=10,
                         type=int,
                         help='Max epochs')
   
@@ -196,7 +198,7 @@ class TrainModule(pl.LightningModule):
                                      weight_decay = 0)
         #scheduler=torch.optim.lr_scheduler.MultiStepLR(optimizer,milestones=[70,80],gamma=0.1)
 
-        scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=10, max_epochs=self.args.trainer_max_epochs)
+        scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=2, max_epochs=self.args.trainer_max_epochs)
         scheduler_config = {
             'scheduler': scheduler,
             'interval': 'epoch',
@@ -208,6 +210,36 @@ class TrainModule(pl.LightningModule):
         return {'optimizer' : optimizer, 'lr_scheduler' : scheduler_config}
 
     def get_dataset(self, args,chr):
+        class ChromosomeDataset(Dataset):
+            def __init__(self, data_dir, window, length, chr, itype):
+                self.data_dir = data_dir
+                self.window = window
+                self.length = length
+                self.itype = itype
+
+                self.x = []
+                self.y = []
+
+                # Ensure chr is a list even if it's a single value
+                if not isinstance(chr, list):
+                    chr = [chr]
+                for i in chr:
+                    contact_file_name = f"{i}_{window}_{length}_{itype}_contact.pt"
+                    feature_file_name  = f"{i}_{window}_{length}_{itype}_feature.pt"
+                    feature_data_path = os.path.join(self.data_dir, feature_file_name)
+                    contact_data_path = os.path.join(self.data_dir, contact_file_name)
+                    contact = torch.load(contact_data_path)
+                    feature = torch.load(feature_data_path)
+
+                    # Concatenate the new data to the existing tensor
+                    self.x.extend(feature)
+                    self.y.extend(contact)
+                
+            def __len__(self):
+                    return len(self.x)
+
+            def __getitem__(self, idx):
+                    return self.x[idx], self.y[idx]
 
         dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.length,chr=chr,itype=args.itpe)
 
@@ -244,7 +276,7 @@ class TrainModule(pl.LightningModule):
         return dataloader
 
     def get_model(self):
-        model = newmodel.ConvTransModel(True,128)
+        model = hicomodel.ConvTransModel(True,128)
         return model
     
     def split_chromosomes(self,selected_chr):

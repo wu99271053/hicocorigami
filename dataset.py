@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import Dataset
 import os
 import torch
-import newmodel
+import hicomodel
 from tqdm import tqdm
 import numpy as np
 

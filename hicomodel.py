@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import numpy as np
 import copy
-import math
 
 class ConvBlock(nn.Module):
     def __init__(self, size, stride = 2, hidden_in = 64, hidden = 64):
@@ -270,6 +269,7 @@ class ConvModel(nn.Module):
     def __init__(self, num_genomic_features, mid_hidden = 256):
         super(ConvModel, self).__init__()
         print('Initializing ConvModel')
+        self.mid_hidden=mid_hidden
         self.encoder = EncoderSplit(num_genomic_features, output_size = mid_hidden, num_blocks = 12)
         self.decoder = Decoder(mid_hidden * 2)
 
@@ -294,8 +294,8 @@ class ConvModel(nn.Module):
         return x.transpose(1, 2).contiguous()
 
     def diagonalize(self, x):
-        x_i = x.unsqueeze(2).repeat(1, 1, 128, 1)
-        x_j = x.unsqueeze(3).repeat(1, 1, 1, 128)
+        x_i = x.unsqueeze(2).repeat(1, 1,self.mid_hidden, 1)
+        x_j = x.unsqueeze(3).repeat(1, 1, 1, self.mid_hidden)
         input_map = torch.cat([x_i, x_j], dim = 1)
         return input_map
 
