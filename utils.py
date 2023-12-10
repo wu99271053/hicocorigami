@@ -6,7 +6,6 @@ import torch
 import hicomodel
 from tqdm import tqdm
 import numpy as np
-import matplotlib.pyplot as plt
 
 class ChromosomeDataset(Dataset):
     def __init__(self, data_dir, window, length, chr, itype):
@@ -44,6 +43,8 @@ def split_chromosomes(input_chr):
     return ([input_chr], [chr for chr in all_chromosomes if chr != input_chr])
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
     checkpointpath=''
     data_dir=''
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
