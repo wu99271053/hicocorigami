@@ -122,13 +122,9 @@ def init_training(args):
                             max_epochs = args.trainer_max_epochs
                             )
     val_chr,train_chr=pl_module.split_chromosomes(1)
-    print(val_chr,train_chr)
     trainloader = pl_module.get_dataloader(args, 'train',train_chr)
     valloader = pl_module.get_dataloader(args, 'val',val_chr)
-    testloader = pl_module.get_dataloader(args, 'val',val_chr)
-    print("abc")
-    #pl_trainer.fit(pl_module, trainloader, valloader)
-    pl_trainer.test(pl_module, testloader)
+    pl_trainer.fit(pl_module, trainloader, valloader)
 
 class TrainModule(pl.LightningModule):
     
@@ -166,14 +162,6 @@ class TrainModule(pl.LightningModule):
         ret_metrics = self._shared_eval_step(batch, batch_idx)
         return ret_metrics
 
-    def test_step(self, batch, batch_idx):
-        input,mat=self.proc_batch(batch)
-        outputs = self(input)
-        untrain_outputs = self.untrain(input)
-        self.all_outputs.append(outputs.cpu().view(-1).numpy())
-        self.all_targets.append(mat.view(-1).numpy())
-        self.all_untrain.append(untrain_outputs.cpu().view(-1).numpy())
-
 
 
     def _shared_eval_step(self, batch, batch_idx):
@@ -197,11 +185,6 @@ class TrainModule(pl.LightningModule):
                   }
         self.log_dict(metrics, prog_bar=True)
     
-    def test_epoch_end(self):
-        np.savetxt(f'{self.args.run_save_path}/computed_outputs.csv', np.concatenate(self.all_outputs), delimiter=",")
-        np.savetxt(f'{self.args.run_save_path}/ground_truths.csv', np.concatenate(self.all_targets), delimiter=",")
-        np.savetxt(f'{self.args.run_save_path}/untrained_outputs.csv', np.concatenate(self.all_untrain), delimiter=",")
-
 
     def _shared_epoch_end(self, step_outputs):
         loss = torch.tensor(step_outputs).mean()
