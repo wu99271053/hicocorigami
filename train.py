@@ -99,7 +99,7 @@ def init_training(args):
     # Checkpoints
     checkpoint_callback = callbacks.ModelCheckpoint(dirpath=f'{args.run_save_path}/models',
                                         save_top_k=args.trainer_save_top_n, 
-                                        monitor='val_loss')
+                                        monitor='val_loss',filename=f'{args.val_chr}')
 
     # LR monitor
     lr_monitor = callbacks.LearningRateMonitor(logging_interval='epoch')
