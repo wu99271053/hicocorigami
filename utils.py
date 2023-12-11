@@ -51,7 +51,10 @@ if __name__ == '__main__':
     val_chr=1
     itpye='Outward'
     rootpath='checkpoint_gassian/'
-    data_dir='64_blur/'
+    data_dir='64_blur/png/'
+    if not os.path.exists(args.data_dir):
+    # Create the directory if it does not exist
+        os.makedirs(data_dir)
     checkpointpath=f'{rootpath}/models/{val_chr}.ckpt'
 
 
@@ -105,11 +108,11 @@ if __name__ == '__main__':
     outputlist=np.concatenate(outputlist)
     targetlist=np.concatenate(targetlist)
     untrain_outputlist=np.concatenate(untrain_outputlist)
-    outputlist_reshaped = outputlist.reshape(-1, 128, 128)
+    outputlist_reshaped = outputlist.reshape(-1, window, window)
     for i in range(len(outputlist_reshaped)):
-        prediction = outputlist.reshape(-1, 128, 128)[i]
-        truth = targetlist.reshape(-1, 128, 128)[i]
-        untrained = untrain_outputlist.reshape(-1, 128, 128)[i]
+        prediction = outputlist.reshape(-1, window, window)[i]
+        truth = targetlist.reshape(-1, window, window)[i]
+        untrained = untrain_outputlist.reshape(-1, window, window)[i]
 
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
 
