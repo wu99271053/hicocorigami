@@ -83,7 +83,7 @@ def init_parser():
                         action='store_false',
                         help='Using ddp, adjust batch size')
   
-  parser.add_argument('--num-workers', dest='dataloader_num_workers', default=8,
+  parser.add_argument('--num-workers', dest='dataloader_num_workers', default=16,
                         type=int,
                         help='Dataloader workers')
 
