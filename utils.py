@@ -50,8 +50,10 @@ if __name__ == '__main__':
     length=128
     val_chr=2
     itpye='Outward'
-    checkpointpath=f'/content/drive/MyDrive/checkpoint_{val_chr}'
-    data_dir=checkpointpath
+    rootpath=f'/content/drive/MyDrive/checkpoint_{val_chr}'
+    data_dir=rootpath
+    checkpointpath=f'{rootpath}/models/{val_chr}.ckpt'
+
 
         
     val_dataset = ChromosomeDataset(data_dir=data_dir, window=window, length=length, chr=val_chr, itype=itpye)
