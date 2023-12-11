@@ -45,13 +45,14 @@ def split_chromosomes(input_chr):
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    checkpointpath='/content/drive/MyDrive/checkpoint'
-    data_dir=checkpointpath
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     window=128
     length=128
     val_chr=2
     itpye='Outward'
+    checkpointpath=f'/content/drive/MyDrive/checkpoint{val_chr}'
+    data_dir=checkpointpath
+
         
     val_dataset = ChromosomeDataset(data_dir=data_dir, window=window, length=length, chr=val_chr, itype=itpye)
     val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=1,shuffle=False,drop_last=True)
