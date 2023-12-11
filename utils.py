@@ -61,16 +61,23 @@ if __name__ == '__main__':
     model = hicomodel.ConvTransModel(True,window)
     untrain_model = hicomodel.ConvTransModel(True, window)
 
-    checkpoint=torch.load(checkpointpath,map_location=torch.device(device))
+    #checkpoint=torch.load(checkpointpath,map_location=torch.device(device))
 
     #model_weights = checkpoint['state_dict']
     #model_weights = {k.replace('model.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('model.')}
     #untrain_weights = {k.replace('untrain.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('untrain.')}
         # Edit keys
 
-    model.load_state_dict(checkpoint)
+    #model.load_state_dict(checkpoint)
     #untrain_model.load_state_dict(untrain_weights)
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    checkpoint = torch.load(checkpointpath, map_location=device)
+    model_weights = checkpoint['state_dict']
+
+    # Edit keys
+    for key in list(model_weights):
+        model_weights[key.replace('model.', '')] = model_weights.pop(key)
+    model.load_state_dict(model_weights)
 
     model.eval()
     untrain_model.eval()
