@@ -171,7 +171,8 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                     contact_matrix[i, j] = contact_matrix[j, i]=value
             
             #contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
-            contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
+            #contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
+            contact_matrix_resize=contact_matrix
 
             
             contact_matrices.append(contact_matrix_resize)

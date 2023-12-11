@@ -51,7 +51,7 @@ if __name__ == '__main__':
     val_chr=1
     itpye='Outward'
     rootpath='checkpoint_gassian/'
-    data_dir='64_blur/'
+    data_dir='64_notransform/'
     save_dir=f'{data_dir}/png/'
     if not os.path.exists(save_dir):
     # Create the directory if it does not exist
