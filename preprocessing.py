@@ -197,7 +197,7 @@ if __name__ == "__main__":
                         help='length of Nucleosomal DNA')
     parser.add_argument('--i_type',default='Outward',
                         help='interaction type')
-    parser.add_argument('--data_dir',default='../../Desktop/processed',
+    parser.add_argument('--data_dir',default='../../Desktop/processed_blur',
                         help='processed data and saved checkpoint')
     
     args = parser.parse_args()
@@ -206,7 +206,9 @@ if __name__ == "__main__":
     # df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
     # selected_id = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
 
-    
+    if not os.path.exists(args.data_dir):
+    # Create the directory if it does not exist
+        os.makedirs(args.data_dir)
     selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
     data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
 
