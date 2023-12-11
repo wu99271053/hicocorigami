@@ -39,10 +39,6 @@ def init_parser():
 
   parser.add_argument('--itype', dest='itpe', default='Outward',
                         help='Path to the model checkpoint')
-
-  
-  
-  
   
   
   parser.add_argument('--save_path', dest='run_save_path', default='checkpoints',

@@ -155,7 +155,7 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                 continue
 
             feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
-            fake_window_size=60
+            #fake_window_size=60
 
 
             contact_matrix = np.zeros((window_size, window_size))#windowsize change to fake window size if not bluring.
@@ -171,8 +171,8 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                     contact_matrix[i, j] = contact_matrix[j, i]=value
             
             #contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
-            #contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
-            contact_matrix_resize=contact_matrix
+            contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
+            #contact_matrix_resize=contact_matrix
 
             
             contact_matrices.append(contact_matrix_resize)
@@ -190,15 +190,15 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='C.Origami_like Training Module.')
-    parser.add_argument('--raw_dir', default='../../Desktop/raw',
+    parser.add_argument('--raw_dir',required=True,
                         help='Path to the raw data')
-    parser.add_argument('--window', default=64,type=int,
+    parser.add_argument('--window',type=int,required=True,
                         help='size of heatmap')
     parser.add_argument('--length',default=128,type=int,
                         help='length of Nucleosomal DNA')
-    parser.add_argument('--i_type',default='Outward',
+    parser.add_argument('--i_type',required=True,
                         help='interaction type')
-    parser.add_argument('--data_dir',default='../../Desktop/processed_blur',
+    parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
     
     args = parser.parse_args()
