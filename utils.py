@@ -63,13 +63,13 @@ if __name__ == '__main__':
 
     checkpoint=torch.load(checkpointpath,map_location=torch.device(device))
 
-    model_weights = checkpoint['state_dict']
-    model_weights = {k.replace('model.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('model.')}
-    untrain_weights = {k.replace('untrain.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('untrain.')}
+    #model_weights = checkpoint['state_dict']
+    #model_weights = {k.replace('model.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('model.')}
+    #untrain_weights = {k.replace('untrain.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('untrain.')}
         # Edit keys
 
-    model.load_state_dict(model_weights)
-    untrain_model.load_state_dict(untrain_weights)
+    model.load_state_dict(checkpoint)
+    #untrain_model.load_state_dict(untrain_weights)
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model.eval()
