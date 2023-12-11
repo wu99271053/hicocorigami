@@ -44,37 +44,52 @@ def split_chromosomes(input_chr):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    import argparse
+
+    parser = argparse.ArgumentParser(description='C.Origami testing Module.')
+
+    parser.add_argument('--window', dest='window', default=64,
+                            type=int,
+                            help='Random seed for training')
+    
+    parser.add_argument('--length', dest='length', default=128,
+                            type=int,
+                            help='Random seed for training')
+    
+    parser.add_argument('--val_chr', dest='val_chr', default=1,
+                            type=int,
+                            help='Random seed for training')
+
+    parser.add_argument('--itype', dest='itpe', default='Outward',
+                            help='Path to the model checkpoint')
+    
+    
+    parser.add_argument('--save_path', dest='run_save_path', default='checkpoints',
+                            help='Path to the model checkpoint')
+
+    # Data directories
+    parser.add_argument('--data_root', dest='dataset_data_root', default='/content/drive/MyDrive/corigamidata',
+                            help='Root path of training data', required=True)
+ 
+    
+
+    args = parser.parse_args()
 
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    window=64
-    length=128
-    val_chr=1
-    itpye='Outward'
-    rootpath='checkpoint_notran/'
-    data_dir='notranprocessed/'
-    save_dir=f'{data_dir}/png/'
+
+    save_dir=f'{args.data_root}/result/'
     if not os.path.exists(save_dir):
     # Create the directory if it does not exist
         os.makedirs(save_dir)
-    checkpointpath=f'{rootpath}/models/{val_chr}.ckpt'
+    checkpointpath=f'{args.data_root}/models/{args.val_chr}.ckpt'
 
 
         
-    val_dataset = ChromosomeDataset(data_dir=data_dir, window=window, length=length, chr=val_chr, itype=itpye)
+    val_dataset = ChromosomeDataset(data_dir=f'{args.data_root}/processed/', window=args.window, length=args.length, chr=args.val_chr, itype=args.itype)
     val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=1,shuffle=False,drop_last=True)
-    model = hicomodel.ConvTransModel(True,window)
-    untrain_model = hicomodel.ConvTransModel(True, window)
+    model = hicomodel.ConvTransModel(True,args.window)
+    untrain_model = hicomodel.ConvTransModel(True, args.window)
 
-    #checkpoint=torch.load(checkpointpath,map_location=torch.device(device))
-
-    #model_weights = checkpoint['state_dict']
-    #model_weights = {k.replace('model.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('model.')}
-    #untrain_weights = {k.replace('untrain.', ''): v for k, v in checkpoint['state_dict'].items() if k.startswith('untrain.')}
-        # Edit keys
-
-    #model.load_state_dict(checkpoint)
-    #untrain_model.load_state_dict(untrain_weights)
-    device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     checkpoint = torch.load(checkpointpath, map_location=device)
     model_weights = checkpoint['state_dict']
 
@@ -102,18 +117,18 @@ if __name__ == '__main__':
             targetlist.append(targets.cpu().view(-1).numpy())
             untrain_outputlist.append(untrain_outputs.cpu().view(-1).numpy())
 
-    np.savetxt(f'{data_dir}/computed_outputs.csv', np.concatenate(outputlist), delimiter=",")
-    np.savetxt(f'{data_dir}/targets.csv', np.concatenate(targetlist), delimiter=",")
-    np.savetxt(f'{data_dir}/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
+    np.savetxt(f'{save_dir}/computed_outputs.csv', np.concatenate(outputlist), delimiter=",")
+    np.savetxt(f'{save_dir}/targets.csv', np.concatenate(targetlist), delimiter=",")
+    np.savetxt(f'{save_dir}/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
 
     outputlist=np.concatenate(outputlist)
     targetlist=np.concatenate(targetlist)
     untrain_outputlist=np.concatenate(untrain_outputlist)
-    outputlist_reshaped = outputlist.reshape(-1, window, window)
+    outputlist_reshaped = outputlist.reshape(-1, args.window, args.window)
     for i in range(len(outputlist_reshaped)):
-        prediction = outputlist.reshape(-1, window, window)[i]
-        truth = targetlist.reshape(-1, window, window)[i]
-        untrained = untrain_outputlist.reshape(-1, window, window)[i]
+        prediction = outputlist.reshape(-1, args.window, args.window)[i]
+        truth = targetlist.reshape(-1, args.window, args.window)[i]
+        untrained = untrain_outputlist.reshape(-1, args.window, args.window)[i]
 
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
 
