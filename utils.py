@@ -52,7 +52,7 @@ if __name__ == '__main__':
     itpye='Outward'
     rootpath='checkpoint_gassian/'
     data_dir='64_blur/png/'
-    if not os.path.exists(args.data_dir):
+    if not os.path.exists(data_dir):
     # Create the directory if it does not exist
         os.makedirs(data_dir)
     checkpointpath=f'{rootpath}/models/{val_chr}.ckpt'
