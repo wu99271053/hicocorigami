@@ -133,7 +133,7 @@ if __name__ == '__main__':
         ax3.set_title('Untrained')
 
         # Save the plot to the specified directory
-        plt.savefig(os.path.join(data_dir, f'heatmap_{i}.png'))
+        plt.savefig(os.path.join(save_dir, f'heatmap_{i}.png'))
         plt.close(fig)  # Close the figure to free memory
 
     # prediction = outputlist.reshape(-1,128, 128)[1]
