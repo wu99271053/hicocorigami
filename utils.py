@@ -98,27 +98,53 @@ if __name__ == '__main__':
     outputlist=np.concatenate(outputlist)
     targetlist=np.concatenate(targetlist)
     untrain_outputlist=np.concatenate(untrain_outputlist)
+    outputlist_reshaped = outputlist.reshape(-1, 128, 128)
+    for i in range(len(outputlist_reshaped)):
+        prediction = outputlist.reshape(-1, 128, 128)[i]
+        truth = targetlist.reshape(-1, 128, 128)[i]
+        untrained = untrain_outputlist.reshape(-1, 128, 128)[i]
 
-    prediction = outputlist.reshape(-1,128, 128)[1]
-    truth=targetlist.reshape(-1,128, 128)[1]
-    untrained=untrain_outputlist.reshape(-1,128, 128)[1]
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
+        # Plot the first heatmap
+        cax1 = ax1.imshow(prediction, cmap='cool', interpolation='nearest')
+        fig.colorbar(cax1, ax=ax1)
+        ax1.set_title('Predicted')
 
-    # Plot the first heatmap
-    cax1 = ax1.imshow(prediction, cmap='cool', interpolation='nearest')
-    fig.colorbar(cax1, ax=ax1)
-    ax1.set_title('predicted')
+        # Plot the second heatmap
+        cax2 = ax2.imshow(truth, cmap='cool', interpolation='nearest')
+        fig.colorbar(cax2, ax=ax2)
+        ax2.set_title('Truth')
 
-    # Plot the second heatmap
-    cax2 = ax2.imshow(truth, cmap='cool', interpolation='nearest')
-    fig.colorbar(cax2, ax=ax2)
-    ax2.set_title('truth')
+        # Plot the third heatmap
+        cax3 = ax3.imshow(untrained, cmap='cool', interpolation='nearest')
+        fig.colorbar(cax3, ax=ax3)
+        ax3.set_title('Untrained')
 
-    # Plot the third heatmap
-    cax3 = ax3.imshow(untrained, cmap='cool', interpolation='nearest')
-    fig.colorbar(cax3, ax=ax3)
-    ax3.set_title('untrained')
+        # Save the plot to the specified directory
+        plt.savefig(os.path.join(data_dir, f'heatmap_{i}.png'))
+        plt.close(fig)  # Close the figure to free memory
 
-    # Display the plot
-    plt.show()
+    # prediction = outputlist.reshape(-1,128, 128)[1]
+    # truth=targetlist.reshape(-1,128, 128)[1]
+    # untrained=untrain_outputlist.reshape(-1,128, 128)[1]
+
+    # fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
+
+    # # Plot the first heatmap
+    # cax1 = ax1.imshow(prediction, cmap='cool', interpolation='nearest')
+    # fig.colorbar(cax1, ax=ax1)
+    # ax1.set_title('predicted')
+
+    # # Plot the second heatmap
+    # cax2 = ax2.imshow(truth, cmap='cool', interpolation='nearest')
+    # fig.colorbar(cax2, ax=ax2)
+    # ax2.set_title('truth')
+
+    # # Plot the third heatmap
+    # cax3 = ax3.imshow(untrained, cmap='cool', interpolation='nearest')
+    # fig.colorbar(cax3, ax=ax3)
+    # ax3.set_title('untrained')
+
+    # # Display the plot
+    # plt.show()
