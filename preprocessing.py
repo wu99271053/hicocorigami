@@ -7,6 +7,8 @@ from scipy.stats import norm
 import argparse
 from skimage.transform import resize
 import os 
+import cv2
+
 
 
 
@@ -153,13 +155,13 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                 continue
 
             feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
-            fake_window_size=50
+            fake_window_size=60
 
 
-            contact_matrix = np.zeros((fake_window_size, fake_window_size))
+            contact_matrix = np.zeros((window_size, window_size))#windowsize change to fake window size if not bluring.
 
-            for i in range(fake_window_size):
-                for j in range(i,fake_window_size):
+            for i in range(window_size):
+                for j in range(i,window_size):
                     id1 = start_id + i
                     id2 = start_id + j
 
@@ -168,7 +170,9 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                     #value = subset_df.loc[(subset_df['id1'] == id1) & (subset_df['id2'] == id2), 'value']
                     contact_matrix[i, j] = contact_matrix[j, i]=value
             
-            contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
+            #contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
+            contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
+
             
             contact_matrices.append(contact_matrix_resize)
             feature_matrices.append(feature_matrix_resize)
