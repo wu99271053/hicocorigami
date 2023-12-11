@@ -211,6 +211,7 @@ class TrainModule(pl.LightningModule):
         return {'optimizer' : optimizer, 'lr_scheduler' : scheduler_config}
 
     def get_dataset(self, args,chr):
+        print("gettingdataset")
 
         dataset=ChromosomeDataset(data_dir=args.dataset_data_root,window=args.window,length=args.length,chr=chr,itype=args.itpe)
 
@@ -218,7 +219,9 @@ class TrainModule(pl.LightningModule):
         return dataset
 
     def get_dataloader(self, args, mode,chr):
+        print("gettingdataset")
         dataset = self.get_dataset(args,chr)
+        print("datasetdone")
 
         if mode == 'train':
             shuffle = True
@@ -244,6 +247,7 @@ class TrainModule(pl.LightningModule):
             persistent_workers=True,
             drop_last=True,
         )
+        print("dataloaderdone")
         return dataloader
 
     def get_model(self):
