@@ -70,9 +70,12 @@ if __name__ == '__main__':
 
     model.load_state_dict(model_weights)
     untrain_model.load_state_dict(untrain_weights)
+    device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model.eval()
     untrain_model.eval()
+    model.to(device)
+    untrain_model.to(device)
     outputlist=[]
     targetlist=[]
     untrain_outputlist=[]
@@ -81,6 +84,7 @@ if __name__ == '__main__':
             inputs, targets = i
             inputs = inputs.transpose(1, 2).contiguous()
             inputs, targets = inputs.float(), targets.float()
+            inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             untrain_outputs = untrain_model(inputs)
             outputlist.append(outputs.cpu().view(-1).numpy())
