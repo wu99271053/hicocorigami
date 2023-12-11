@@ -45,8 +45,8 @@ def split_chromosomes(input_chr):
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    checkpointpath=''
-    data_dir=''
+    checkpointpath='/content/drive/My Drive/checkpoint'
+    data_dir=checkpointpath
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     window=128
     length=128
