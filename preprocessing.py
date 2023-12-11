@@ -36,37 +36,6 @@ def cleaningup(data_dir=None,raw_dir=None,window=None,i_type=None):
         df_droped=df_sorted.drop(columns='key')
         df_filtered = df_droped[df_droped.iloc[:, 1] - df_droped.iloc[:, 0] <= window]
         df_filtered.to_csv(f'{data_dir}/{i_type}_{window}.csv',index=False,header=None)
-
-        #return df_droped
-    
-
-    # def filling_zeros(dataframe,window=window):
-    #     df = dataframe.iloc[:, :2]
-        
-    #     # Create a set of tuples from the DataFrame for existing edges
-    #     existing_edges = set(tuple(x) for x in df.to_numpy())
-        
-    #     missing_edges = []
-    #     for src in tqdm(np.unique(df[0].values)):  # Note: This was changed to df[0]
-    #         # Create the desired set of tuples based on window size
-    #         desired_edges = {(src, src+i) for i in range(0, window+1)}
-            
-    #         # Identify the missing edges
-    #         current_missing_edges = desired_edges - existing_edges
-            
-    #         for edge in current_missing_edges:
-    #             #missing_edges.append([edge[0], edge[1], 0, 0, 0, 0])
-    #             missing_edges.append([edge[0], edge[1], 0])#only one interaction
-
-    #     missing_df = pd.DataFrame(missing_edges)
-        
-    #     # Combine original and missing data, then sort and save
-    #     new_df = dataframe
-    #     combined_data = pd.concat([new_df, missing_df], axis=0)
-    #     combined_data = combined_data.sort_values(by=[0, 1])
-    #     filtered_df = combined_data[combined_data.iloc[:, 1] - combined_data.iloc[:, 0] <= window]
-
-    #     filtered_df.to_csv(f'{data_dir}/{i_type}_{window}.csv',index=False,header=None)
     
     df1,selected_id=removing_repeated()
     #df2=removing_duplicated(df1)
@@ -184,9 +153,7 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                 continue
 
             feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
-            noise = np.random.randn(feature_matrix_resize) * 0.1
-            feature_matrix_resize =  + noise
-            fake_window_size=100
+            fake_window_size=50
 
 
             contact_matrix = np.zeros((fake_window_size, fake_window_size))
@@ -220,7 +187,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='C.Origami_like Training Module.')
     parser.add_argument('--raw_dir', default='../../Desktop/raw',
                         help='Path to the raw data')
-    parser.add_argument('--window', default=128,type=int,
+    parser.add_argument('--window', default=64,type=int,
                         help='size of heatmap')
     parser.add_argument('--length',default=128,type=int,
                         help='length of Nucleosomal DNA')
