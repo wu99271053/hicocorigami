@@ -46,12 +46,12 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    window=128
+    window=64
     length=128
-    val_chr=2
+    val_chr=1
     itpye='Outward'
-    rootpath=f'/content/drive/MyDrive/checkpoint_{val_chr}'
-    data_dir=rootpath
+    rootpath='checkpoint_gassian/'
+    data_dir='64_blur/'
     checkpointpath=f'{rootpath}/models/{val_chr}.ckpt'
 
 
