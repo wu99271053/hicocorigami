@@ -50,7 +50,7 @@ if __name__ == '__main__':
     length=128
     val_chr=2
     itpye='Outward'
-    checkpointpath=f'/content/drive/MyDrive/checkpoint{val_chr}'
+    checkpointpath=f'/content/drive/MyDrive/checkpoint_{val_chr}'
     data_dir=checkpointpath
 
         
