@@ -95,6 +95,9 @@ if __name__ == '__main__':
     np.savetxt(f'{data_dir}/targets.csv', np.concatenate(targetlist), delimiter=",")
     np.savetxt(f'{data_dir}/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
 
+    outputlist=np.concatenate(outputlist)
+    targetlist=np.concatenate(targetlist)
+    untrain_outputlist=np.concatenate(untrain_outputlist)
 
     prediction = outputlist.reshape(-1,128, 128)[1]
     truth=targetlist.reshape(-1,128, 128)[1]
