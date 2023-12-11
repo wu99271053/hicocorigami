@@ -50,7 +50,7 @@ if __name__ == '__main__':
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     window=128
     length=128
-    val_chr=1
+    val_chr=2
     itpye='Outward'
         
     val_dataset = ChromosomeDataset(data_dir=data_dir, window=window, length=length, chr=val_chr, itype=itpye)
