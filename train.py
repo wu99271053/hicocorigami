@@ -130,7 +130,6 @@ def init_training(args):
     print("trainloader ready")
     valloader = pl_module.get_dataloader(args, 'val',val_chr)
     print("valloader ready")
-    print
     pl_trainer.fit(pl_module, trainloader, valloader)
 
 class TrainModule(pl.LightningModule):
