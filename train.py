@@ -241,8 +241,8 @@ class TrainModule(pl.LightningModule):
         )
         return dataloader
 
-    def get_model(self):
-        model = hicomodel.ConvTransModel(True,64)
+    def get_model(self,args):
+        model = hicomodel.ConvTransModel(True,args.window)
         return model
     
     def split_chromosomes(self,selected_chr):
