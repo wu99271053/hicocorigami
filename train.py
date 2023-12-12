@@ -132,8 +132,8 @@ class TrainModule(pl.LightningModule):
     
     def __init__(self, args):
         super().__init__()
-        self.model = self.get_model()
         self.args = args
+        self.model = self.get_model(args)
         self.save_hyperparameters()
 
 
