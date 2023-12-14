@@ -1,8 +1,8 @@
 #!/bin/bash
 
-python hicocorigami/preprocessing.py --raw_dir=raw --window=64 --itype=Outward --data_dir=notransform/64/64_processed
-python hicocorigami/preprocessing.py --raw_dir=raw --window=32 --itype=Outward --data_dir=notransform/32/32_processed
-python hicocorigami/preprocessing.py --raw_dir=raw --window=16 --itype=Outward --data_dir=notransform/16/16_processed
+python hicocorigami/preprocessing.py --raw_dir=raw --window=64 --i_type=Outward --data_dir=notransform/64/64_processed
+python hicocorigami/preprocessing.py --raw_dir=raw --window=32 --i_type=Outward --data_dir=notransform/32/32_processed
+python hicocorigami/preprocessing.py --raw_dir=raw --window=16 --i_type=Outward --data_dir=notransform/16/16_processed
 
 python hicocorigami/train.py --window=64 --val_chr=1 --data-root=notransform/64/64_processed/ --save_path=notransform/64/checkpoint_1
 python hicocorigami/train.py --window=64 --val_chr=2 --data-root=notransform/64/64_processed/ --save_path=notransform/64/checkpoint_2

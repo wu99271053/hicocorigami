@@ -204,7 +204,7 @@ if __name__ == "__main__":
                         help='interaction type')
     parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
-    parser.add_argument('--gaussian',required=True,action='store_true',
+    parser.add_argument('--gaussian',action='store_true',
                         help='processed data and saved checkpoint')
     
     
