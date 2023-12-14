@@ -114,7 +114,7 @@ def preprocessing(data_dir=None,raw_dir=None,length=None):
     return data_matrix
 
 
-def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size,chromosome=None):
+def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size,chromosome=None,gaussian=False):
     df=pd.read_csv(f'{data_dir}/{itype}_{window_size}.csv',header=None,dtype=np.int32)
     df.columns = ['id1', 'id2', 'value']
     value_dict = {(row['id1'], row['id2']): row['value'] for index, row in df.iterrows()}
@@ -170,9 +170,12 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
                     #value = subset_df.loc[(subset_df['id1'] == id1) & (subset_df['id2'] == id2), 'value']
                     contact_matrix[i, j] = contact_matrix[j, i]=value
             
+            
             #contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
-            contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
-            #contact_matrix_resize=contact_matrix
+            if gaussian:
+                contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
+            else:
+                contact_matrix_resize=contact_matrix
 
             
             contact_matrices.append(contact_matrix_resize)
@@ -200,6 +203,9 @@ if __name__ == "__main__":
                         help='interaction type')
     parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
+    parser.add_argument('--gaussian',required=True,action='store_true',
+                        help='processed data and saved checkpoint')
+    
     
     args = parser.parse_args()
 
@@ -213,4 +219,4 @@ if __name__ == "__main__":
     selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
     data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
 
-    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_id,window_size=args.window)
+    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_id,window_size=args.window,gaussian=args.gaussian)
