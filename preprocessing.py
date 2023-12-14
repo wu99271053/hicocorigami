@@ -114,7 +114,8 @@ def preprocessing(data_dir=None,raw_dir=None,length=None):
     return data_matrix
 
 
-def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size,chromosome=None,gaussian=False):
+def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size,chromosome=None,gaussian=None):
+    print(f'using gaussian?{gaussian}')
     df=pd.read_csv(f'{data_dir}/{itype}_{window_size}.csv',header=None,dtype=np.int32)
     df.columns = ['id1', 'id2', 'value']
     value_dict = {(row['id1'], row['id2']): row['value'] for index, row in df.iterrows()}
