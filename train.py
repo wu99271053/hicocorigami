@@ -54,11 +54,11 @@ def init_parser():
                         help='CNN with Transformer')
 
   # Training Parameters
-  parser.add_argument('--patience', dest='trainer_patience', default=10,
+  parser.add_argument('--patience', dest='trainer_patience', default=20,
                         type=int,
                         help='Epoches before early stopping')
   
-  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=30,
+  parser.add_argument('--max-epochs', dest='trainer_max_epochs', default=50,
                         type=int,
                         help='Max epochs')
   
@@ -194,7 +194,7 @@ class TrainModule(pl.LightningModule):
                                      lr = 2e-4,
                                      weight_decay = 0)
 
-        scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=5, max_epochs=self.args.trainer_max_epochs)
+        scheduler = pl_bolts.optimizers.lr_scheduler.LinearWarmupCosineAnnealingLR(optimizer, warmup_epochs=10, max_epochs=self.args.trainer_max_epochs)
         scheduler_config = {
             'scheduler': scheduler,
             'interval': 'epoch',
