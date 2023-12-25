@@ -62,7 +62,6 @@ if __name__ == '__main__':
 
     parser.add_argument('--itype', dest='itpe', default='Outward',
                             help='Path to the model checkpoint')
-    
 
     # Data directories
     parser.add_argument('--data_root', dest='dataset_data_root', default='/content/drive/MyDrive/corigamidata',
