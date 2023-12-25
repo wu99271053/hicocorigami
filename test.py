@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    save_dir=f'{args.data_root}/result/'
+    save_dir=f'{args.data_root}/result'
     if not os.path.exists(save_dir):
     # Create the directory if it does not exist
         os.makedirs(save_dir)
