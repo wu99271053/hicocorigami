@@ -31,7 +31,7 @@ class inferenceDataset(Dataset):
         if not isinstance(chr, list):
             chr = [chr]
         for i in chr:
-            feature_file_name  = f"{i}_{window}_{length}_{itype}_feature.pt"
+            feature_file_name  = f"{i}_{window}_{length}_{itype}_{timestep}_feature.pt"
             feature_data_path = os.path.join(self.data_dir, feature_file_name)
             feature = torch.load(feature_data_path)
 
@@ -148,7 +148,7 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,window_size,chromosome=
 
             feature_matrices.append(feature_matrix_resize)
 
-        torch.save(feature_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_{timestep}_feature.pt')
+        torch.save(feature_matrices, f'{data_dir}/processed/{chr}_{window_size}_{length}_{itype}_{timestep}_feature.pt')
 
 
     
@@ -169,10 +169,13 @@ if __name__ == "__main__":
                         help='interaction type')
     parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
-    parser.add_argument('--gaussian',action='store_true',
+    parser.add_argument('--model_dir',required=True,
                         help='processed data and saved checkpoint')
     parser.add_argument('--timestep',default=4,type=int,
                         help='length of Nucleosomal DNA')
+    parser.add_argument('--val_chr', dest='val_chr', default=1,
+                            type=int,
+                            help='Random seed for training')
     
     
     args = parser.parse_args()
@@ -192,15 +195,16 @@ if __name__ == "__main__":
     
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    save_dir=f'{args.data_root}/result/'
+    save_dir=f'{args.data_dir}/result/{args.val_chr}'
     if not os.path.exists(save_dir):
     # Create the directory if it does not exist
         os.makedirs(save_dir)
-    checkpointpath=f'{args.data_root}/models/{args.val_chr}.ckpt'
+    checkpointpath=f'{args.itype}/{args.window}/{args.data_dir}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
+
 
 
         
-    infer_dataset = inferenceDataset(data_dir=f'{args.data_root}/processed/', window=args.window, length=args.length, chr=args.val_chr, itype=args.itype,timestep=args.timestep)
+    infer_dataset = inferenceDataset(data_dir=f'{args.data_dir}/processed', window=args.window, length=args.length, chr=args.val_chr, itype=args.itype,timestep=args.timestep)
     infer_loader=torch.utils.data.DataLoader(infer_dataset,batch_size=1,shuffle=False,drop_last=True)
     model = hicomodel.ConvTransModel(True,args.window)
 

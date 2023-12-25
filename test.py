@@ -63,9 +63,6 @@ if __name__ == '__main__':
     parser.add_argument('--itype', dest='itpe', default='Outward',
                             help='Path to the model checkpoint')
     
-    
-    parser.add_argument('--save_path', dest='run_save_path', default='checkpoints',
-                            help='Path to the model checkpoint')
 
     # Data directories
     parser.add_argument('--data_root', dest='dataset_data_root', default='/content/drive/MyDrive/corigamidata',
@@ -81,7 +78,7 @@ if __name__ == '__main__':
     if not os.path.exists(save_dir):
     # Create the directory if it does not exist
         os.makedirs(save_dir)
-    checkpointpath=f'{args.data_root}/models/{args.val_chr}.ckpt'
+    checkpointpath=f'{args.data_root}/checkpoint_{args.val_char}/models/{args.val_chr}.ckpt'
 
 
         
