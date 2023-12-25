@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
 
         
-    val_dataset = ChromosomeDataset(data_dir=f'{args.data_root}/processed/', window=args.window, length=args.length, chr=args.val_chr, itype=args.itype)
+    val_dataset = ChromosomeDataset(data_dir=f'{args.data_root}/{args.window}_processed/', window=args.window, length=args.length, chr=args.val_chr, itype=args.itype)
     val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=1,shuffle=False,drop_last=True)
     model = hicomodel.ConvTransModel(True,args.window)
     untrain_model = hicomodel.ConvTransModel(True, args.window)
