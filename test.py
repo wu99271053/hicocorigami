@@ -60,11 +60,11 @@ if __name__ == '__main__':
                             type=int,
                             help='Random seed for training')
 
-    parser.add_argument('--itype', dest='itpe', default='Outward',
+    parser.add_argument('--itype', default='Outward',
                             help='Path to the model checkpoint')
 
     # Data directories
-    parser.add_argument('--data_root', dest='dataset_data_root', default='/content/drive/MyDrive/corigamidata',
+    parser.add_argument('--data_root', default='/content/drive/MyDrive/corigamidata',
                             help='Root path of training data', required=True)
  
     
