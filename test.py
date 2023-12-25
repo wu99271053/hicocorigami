@@ -78,7 +78,7 @@ if __name__ == '__main__':
     if not os.path.exists(save_dir):
     # Create the directory if it does not exist
         os.makedirs(save_dir)
-    checkpointpath=f'{args.data_root}/checkpoint_{args.val_char}/models/{args.val_chr}.ckpt'
+    checkpointpath=f'{args.data_root}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
 
 
         
