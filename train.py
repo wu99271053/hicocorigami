@@ -9,7 +9,7 @@ import pl_bolts
 import copy
 from torch.utils.data import Dataset
 import os
-from utils import ChromosomeDataset
+from test import ChromosomeDataset
 
 
 
