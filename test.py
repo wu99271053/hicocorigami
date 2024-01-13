@@ -141,7 +141,7 @@ if __name__ == '__main__':
             outputlist.append(outputs.cpu().view(-1).numpy())
             targetlist.append(targets.cpu().view(-1).numpy())
             untrain_outputlist.append(untrain_outputs.cpu().view(-1).numpy())
-
+    os.makedirs(f'{save_dir}/csv')
     np.savetxt(f'{save_dir}/csv/computed_outputs.csv', np.concatenate(outputlist), delimiter=",")
     np.savetxt(f'{save_dir}/csv/targets.csv', np.concatenate(targetlist), delimiter=",")
     np.savetxt(f'{save_dir}/csv/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
