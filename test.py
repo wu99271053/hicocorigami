@@ -79,23 +79,37 @@ if __name__ == '__main__':
     # Data directories
     parser.add_argument('--data_root', default='/content/drive/MyDrive/corigamidata',
                             help='Root path of training data', required=True)
- 
     
+    parser.add_argument('--gaussian',action='store_true',
+                        help='processed data and saved checkpoint')
+    
+
+ 
 
     args = parser.parse_args()
 
     device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(args)
+    if args.gaussian:
+        save_dir=f'{args.itype}/gaussian/{args.window}/checkpoint_{args.val_chr}/result_1'
+        if not os.path.exists(save_dir):
+        # Create the directory if it does not exist
+            os.makedirs(save_dir)
+        checkpointpath=f'{args.itype}/gaussian/{args.window}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
+        data_dir=f'{args.data_root}/gaussian/'
+    else:
+        save_dir=f'{args.itype}/notransform/{args.window}/checkpoint_{args.val_chr}/result_1'
+        if not os.path.exists(save_dir):
+        # Create the directory if it does not exist
+            os.makedirs(save_dir)
+        checkpointpath=f'{args.itype}/notransform/{args.window}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
+        data_dir=f'{args.data_root}/notransform/'
 
-    save_dir=f'{args.data_root}/checkpoint_{args.val_chr}/result_1'
-    if not os.path.exists(save_dir):
-    # Create the directory if it does not exist
-        os.makedirs(save_dir)
-    checkpointpath=f'{args.data_root}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
+
 
 
         
-    val_dataset = ChromosomeDataset(data_dir=f'{args.data_root}/{args.window}_processed/', window=args.window, length=args.length, chr=args.val_chr, itype=args.itype)
+    val_dataset = ChromosomeDataset(data_dir=data_dir, window=args.window, length=args.length, chr=args.val_chr, itype=args.itype)
     val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=1,shuffle=False,drop_last=True)
     model = hicomodel.ConvTransModel(True,args.window)
     untrain_model = hicomodel.ConvTransModel(True, args.window)
