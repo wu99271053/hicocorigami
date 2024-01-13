@@ -142,89 +142,89 @@ if __name__ == '__main__':
             targetlist.append(targets.cpu().view(-1).numpy())
             untrain_outputlist.append(untrain_outputs.cpu().view(-1).numpy())
 
-    # np.savetxt(f'{save_dir}/computed_outputs.csv', np.concatenate(outputlist), delimiter=",")
-    # np.savetxt(f'{save_dir}/targets.csv', np.concatenate(targetlist), delimiter=",")
-    # np.savetxt(f'{save_dir}/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
+    np.savetxt(f'{save_dir}/csv/computed_outputs.csv', np.concatenate(outputlist), delimiter=",")
+    np.savetxt(f'{save_dir}/csv/targets.csv', np.concatenate(targetlist), delimiter=",")
+    np.savetxt(f'{save_dir}/csv/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
 
-    outputlist=np.concatenate(outputlist).reshape(-1, args.window, args.window)
-    targetlist=np.concatenate(targetlist).reshape(-1, args.window, args.window)
-    untrain_outputlist=np.concatenate(untrain_outputlist).reshape(-1, args.window, args.window)
+    # outputlist=np.concatenate(outputlist).reshape(-1, args.window, args.window)
+    # targetlist=np.concatenate(targetlist).reshape(-1, args.window, args.window)
+    # untrain_outputlist=np.concatenate(untrain_outputlist).reshape(-1, args.window, args.window)
  
 
-    for i in range(len(outputlist)):
-        prediction = outputlist[i]
-        truth = targetlist[i]
-        untrained = untrain_outputlist[i]
+    # for i in range(len(outputlist)):
+    #     prediction = outputlist[i]
+    #     truth = targetlist[i]
+    #     untrained = untrain_outputlist[i]
 
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
+    #     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
 
-        # Plot the first heatmap
-        cax1 = ax1.imshow(prediction, cmap=colormap, interpolation='nearest')
-        fig.colorbar(cax1, ax=ax1)
-        ax1.set_title('Predicted')
+    #     # Plot the first heatmap
+    #     cax1 = ax1.imshow(prediction, cmap=colormap, interpolation='nearest')
+    #     fig.colorbar(cax1, ax=ax1)
+    #     ax1.set_title('Predicted')
 
-        # Plot the second heatmap
-        cax2 = ax2.imshow(truth, cmap=colormap, interpolation='nearest')
-        fig.colorbar(cax2, ax=ax2)
-        ax2.set_title('Truth')
+    #     # Plot the second heatmap
+    #     cax2 = ax2.imshow(truth, cmap=colormap, interpolation='nearest')
+    #     fig.colorbar(cax2, ax=ax2)
+    #     ax2.set_title('Truth')
 
-        # Plot the third heatmap
-        cax3 = ax3.imshow(untrained, cmap=colormap, interpolation='nearest')
-        fig.colorbar(cax3, ax=ax3)
-        ax3.set_title('Untrained')
+    #     # Plot the third heatmap
+    #     cax3 = ax3.imshow(untrained, cmap=colormap, interpolation='nearest')
+    #     fig.colorbar(cax3, ax=ax3)
+    #     ax3.set_title('Untrained')
 
-        # Save the plot to the specified directory
-        plt.savefig(os.path.join(save_dir, f'heatmap_{i}.png'))
-        plt.close(fig)  # Close the figure to free memory
+    #     # Save the plot to the specified directory
+    #     plt.savefig(os.path.join(save_dir, f'heatmap_{i}.png'))
+    #     plt.close(fig)  # Close the figure to free memory
     
-    spearman_scores_pred_truth = []
-    pearson_scores_pred_truth = []
-    spearman_scores_untrain_truth = []
-    pearson_scores_untrain_truth = []
+    # spearman_scores_pred_truth = []
+    # pearson_scores_pred_truth = []
+    # spearman_scores_untrain_truth = []
+    # pearson_scores_untrain_truth = []
 
-    for i in range(len(outputlist)):
-        prediction = outputlist[i].flatten()
-        truth = targetlist[i].flatten()
-        untrained = untrain_outputlist[i].flatten()
+    # for i in range(len(outputlist)):
+    #     prediction = outputlist[i].flatten()
+    #     truth = targetlist[i].flatten()
+    #     untrained = untrain_outputlist[i].flatten()
 
-        # Compute Spearman and Pearson correlations
-        spearman_pred_truth, _ = stats.spearmanr(prediction, truth)
-        pearson_pred_truth, _ = stats.pearsonr(prediction, truth)
-        spearman_untrain_truth, _ = stats.spearmanr(untrained, truth)
-        pearson_untrain_truth, _ = stats.pearsonr(untrained, truth)
+    #     # Compute Spearman and Pearson correlations
+    #     spearman_pred_truth, _ = stats.spearmanr(prediction, truth)
+    #     pearson_pred_truth, _ = stats.pearsonr(prediction, truth)
+    #     spearman_untrain_truth, _ = stats.spearmanr(untrained, truth)
+    #     pearson_untrain_truth, _ = stats.pearsonr(untrained, truth)
 
-        # Store the scores
-        spearman_scores_pred_truth.append(spearman_pred_truth)
-        pearson_scores_pred_truth.append(pearson_pred_truth)
-        spearman_scores_untrain_truth.append(spearman_untrain_truth)
-        pearson_scores_untrain_truth.append(pearson_untrain_truth)
+    #     # Store the scores
+    #     spearman_scores_pred_truth.append(spearman_pred_truth)
+    #     pearson_scores_pred_truth.append(pearson_pred_truth)
+    #     spearman_scores_untrain_truth.append(spearman_untrain_truth)
+    #     pearson_scores_untrain_truth.append(pearson_untrain_truth)
 
-    # Create a box plot for the correlation scores
-    data_to_plot = [spearman_scores_pred_truth, spearman_scores_untrain_truth,
-                    pearson_scores_pred_truth, pearson_scores_untrain_truth]
+    # # Create a box plot for the correlation scores
+    # data_to_plot = [spearman_scores_pred_truth, spearman_scores_untrain_truth,
+    #                 pearson_scores_pred_truth, pearson_scores_untrain_truth]
 
-    # Colors for Prediction and Untrained
-    colors = ['blue', 'green', 'blue', 'green']
+    # # Colors for Prediction and Untrained
+    # colors = ['blue', 'green', 'blue', 'green']
 
-    plt.figure(figsize=(10, 6))
+    # plt.figure(figsize=(10, 6))
 
-    # Creating box plots
-    bp = plt.boxplot(data_to_plot, patch_artist=True, positions=[1, 2, 4, 5], widths=0.6)
+    # # Creating box plots
+    # bp = plt.boxplot(data_to_plot, patch_artist=True, positions=[1, 2, 4, 5], widths=0.6)
 
-    # Apply colors
-    for patch, color in zip(bp['boxes'], colors):
-        patch.set_facecolor(color)
+    # # Apply colors
+    # for patch, color in zip(bp['boxes'], colors):
+    #     patch.set_facecolor(color)
 
-    # Adding legend
-    import matplotlib.patches as mpatches
-    legend_patches = [mpatches.Patch(color=colors[i], label=['Prediction', 'Untrained'][i % 2]) for i in range(2)]
-    plt.legend(handles=legend_patches, loc='upper right')
+    # # Adding legend
+    # import matplotlib.patches as mpatches
+    # legend_patches = [mpatches.Patch(color=colors[i], label=['Prediction', 'Untrained'][i % 2]) for i in range(2)]
+    # plt.legend(handles=legend_patches, loc='upper right')
 
-    plt.xticks([1.5, 4.5], ['Spearman Correlation', 'Pearson Correlation'])
-    plt.ylabel('Correlation Score')
-    plt.title(args.itype)
-    plt.savefig(os.path.join(save_dir, 'correlation_scores_boxplot.png'))
-    plt.close()
+    # plt.xticks([1.5, 4.5], ['Spearman Correlation', 'Pearson Correlation'])
+    # plt.ylabel('Correlation Score')
+    # plt.title(args.itype)
+    # plt.savefig(os.path.join(save_dir, 'correlation_scores_boxplot.png'))
+    # plt.close()
 
 
 #inward:cool
