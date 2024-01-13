@@ -7,6 +7,7 @@ import hicomodel
 from tqdm import tqdm
 import numpy as np
 import scipy.stats as stats
+import pandas as pd
 
 
 def get_colormap(itype):
@@ -142,93 +143,88 @@ if __name__ == '__main__':
             targetlist.append(targets.cpu().view(-1).numpy())
             untrain_outputlist.append(untrain_outputs.cpu().view(-1).numpy())
     os.makedirs(f'{save_dir}/csv')
+    os.makedirs(f'{save_dir}/plots')
+
     np.savetxt(f'{save_dir}/csv/computed_outputs.csv', np.concatenate(outputlist), delimiter=",")
     np.savetxt(f'{save_dir}/csv/targets.csv', np.concatenate(targetlist), delimiter=",")
     np.savetxt(f'{save_dir}/csv/untrain_outputs.csv', np.concatenate(untrain_outputlist), delimiter=",")
 
-    # outputlist=np.concatenate(outputlist).reshape(-1, args.window, args.window)
-    # targetlist=np.concatenate(targetlist).reshape(-1, args.window, args.window)
-    # untrain_outputlist=np.concatenate(untrain_outputlist).reshape(-1, args.window, args.window)
- 
+outputlist_df = pd.read_csv(f'{save_dir}/csv/computed_outputs.csv', header=None)
+targetlist_df = pd.read_csv(f'{save_dir}/csv/targets.csv', header=None)
+untrain_outputlist_df = pd.read_csv(f'{save_dir}/csv/untrain_outputs.csv', header=None)
 
-    # for i in range(len(outputlist)):
-    #     prediction = outputlist[i]
-    #     truth = targetlist[i]
-    #     untrained = untrain_outputlist[i]
+# Converting DataFrames to NumPy arrays and reshaping
+outputlist = outputlist_df.values.reshape(-1, 64, 64)
+targetlist = targetlist_df.values.reshape(-1, 64, 64)
+untrain_outputlist = untrain_outputlist_df.values.reshape(-1, 64, 64)
+colormap = get_colormap(args.itype)
 
-    #     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 6))
+fig, axes = plt.subplots(1, 3, figsize=(12, 4))  # Adjusted size for faster processing
+fig.subplots_adjust(hspace=0.4, wspace=0.4)
 
-    #     # Plot the first heatmap
-    #     cax1 = ax1.imshow(prediction, cmap=colormap, interpolation='nearest')
-    #     fig.colorbar(cax1, ax=ax1)
-    #     ax1.set_title('Predicted')
+for i in tqdm(range(len(outputlist))):
+    for ax in axes:
+        ax.clear()
+    prediction = outputlist[i]
+    truth = targetlist[i]
+    untrained = untrain_outputlist[i]
+    im1 = axes[0].imshow(prediction, cmap=colormap, interpolation='bilinear')
+    axes[0].set_title('Predicted')
+    im2 = axes[1].imshow(truth, cmap=colormap, interpolation='bilinear')
+    axes[1].set_title('Truth')
+    im3 = axes[2].imshow(untrained, cmap=colormap, interpolation='bilinear')
+    axes[2].set_title('Untrained')
 
-    #     # Plot the second heatmap
-    #     cax2 = ax2.imshow(truth, cmap=colormap, interpolation='nearest')
-    #     fig.colorbar(cax2, ax=ax2)
-    #     ax2.set_title('Truth')
-
-    #     # Plot the third heatmap
-    #     cax3 = ax3.imshow(untrained, cmap=colormap, interpolation='nearest')
-    #     fig.colorbar(cax3, ax=ax3)
-    #     ax3.set_title('Untrained')
-
-    #     # Save the plot to the specified directory
-    #     plt.savefig(os.path.join(save_dir, f'heatmap_{i}.png'))
-    #     plt.close(fig)  # Close the figure to free memory
+    plt.savefig(os.path.join(f'{save_dir}/plots', f'heatmap_{i}.jpg'),format='jpg')
     
-    # spearman_scores_pred_truth = []
-    # pearson_scores_pred_truth = []
-    # spearman_scores_untrain_truth = []
-    # pearson_scores_untrain_truth = []
+plt.close(fig)  # Close the figure to free memory
 
-    # for i in range(len(outputlist)):
-    #     prediction = outputlist[i].flatten()
-    #     truth = targetlist[i].flatten()
-    #     untrained = untrain_outputlist[i].flatten()
+spearman_scores_pred_truth = []
+pearson_scores_pred_truth = []
+spearman_scores_untrain_truth = []
+pearson_scores_untrain_truth = []
 
-    #     # Compute Spearman and Pearson correlations
-    #     spearman_pred_truth, _ = stats.spearmanr(prediction, truth)
-    #     pearson_pred_truth, _ = stats.pearsonr(prediction, truth)
-    #     spearman_untrain_truth, _ = stats.spearmanr(untrained, truth)
-    #     pearson_untrain_truth, _ = stats.pearsonr(untrained, truth)
+for i in range(len(outputlist)):
+    prediction = outputlist[i].flatten()
+    truth = targetlist[i].flatten()
+    untrained = untrain_outputlist[i].flatten()
 
-    #     # Store the scores
-    #     spearman_scores_pred_truth.append(spearman_pred_truth)
-    #     pearson_scores_pred_truth.append(pearson_pred_truth)
-    #     spearman_scores_untrain_truth.append(spearman_untrain_truth)
-    #     pearson_scores_untrain_truth.append(pearson_untrain_truth)
+    # Compute Spearman and Pearson correlations
+    spearman_pred_truth, _ = stats.spearmanr(prediction, truth)
+    pearson_pred_truth, _ = stats.pearsonr(prediction, truth)
+    spearman_untrain_truth, _ = stats.spearmanr(untrained, truth)
+    pearson_untrain_truth, _ = stats.pearsonr(untrained, truth)
 
-    # # Create a box plot for the correlation scores
-    # data_to_plot = [spearman_scores_pred_truth, spearman_scores_untrain_truth,
-    #                 pearson_scores_pred_truth, pearson_scores_untrain_truth]
+    # Store the scores
+    spearman_scores_pred_truth.append(spearman_pred_truth)
+    pearson_scores_pred_truth.append(pearson_pred_truth)
+    spearman_scores_untrain_truth.append(spearman_untrain_truth)
+    pearson_scores_untrain_truth.append(pearson_untrain_truth)
 
-    # # Colors for Prediction and Untrained
-    # colors = ['blue', 'green', 'blue', 'green']
+# Create a box plot for the correlation scores
+data_to_plot = [spearman_scores_pred_truth, spearman_scores_untrain_truth,
+                pearson_scores_pred_truth, pearson_scores_untrain_truth]
 
-    # plt.figure(figsize=(10, 6))
+# Colors for Prediction and Untrained
+colors = ['blue', 'green', 'blue', 'green']
 
-    # # Creating box plots
-    # bp = plt.boxplot(data_to_plot, patch_artist=True, positions=[1, 2, 4, 5], widths=0.6)
+plt.figure(figsize=(10, 6))
 
-    # # Apply colors
-    # for patch, color in zip(bp['boxes'], colors):
-    #     patch.set_facecolor(color)
+# Creating box plots
+bp = plt.boxplot(data_to_plot, patch_artist=True, positions=[1, 2, 4, 5], widths=0.6)
 
-    # # Adding legend
-    # import matplotlib.patches as mpatches
-    # legend_patches = [mpatches.Patch(color=colors[i], label=['Prediction', 'Untrained'][i % 2]) for i in range(2)]
-    # plt.legend(handles=legend_patches, loc='upper right')
+# Apply colors
+for patch, color in zip(bp['boxes'], colors):
+    patch.set_facecolor(color)
 
-    # plt.xticks([1.5, 4.5], ['Spearman Correlation', 'Pearson Correlation'])
-    # plt.ylabel('Correlation Score')
-    # plt.title(args.itype)
-    # plt.savefig(os.path.join(save_dir, 'correlation_scores_boxplot.png'))
-    # plt.close()
+# Adding legend
+import matplotlib.patches as mpatches
+legend_patches = [mpatches.Patch(color=colors[i], label=['Prediction', 'Untrained'][i % 2]) for i in range(2)]
+plt.legend(handles=legend_patches, loc='upper right')
 
+plt.xticks([1.5, 4.5], ['Spearman Correlation', 'Pearson Correlation'])
+plt.ylabel('Correlation Score')
+plt.title("Combined")
+plt.savefig(os.path.join(f'{save_dir}/plots', 'correlation_scores_boxplot.png'))
+plt.close()
 
-#inward:cool
-#outward: winter
-#tandem+: autumn
-#tandem-: summer
-#combine: Wistia
