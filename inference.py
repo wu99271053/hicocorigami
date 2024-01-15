@@ -79,16 +79,14 @@ if __name__ == "__main__":
         # Create the directory if it does not exist
             os.makedirs(save_dir)
         checkpointpath=f'{args.itype}/gaussian/{args.window}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
-        data_dir=f'{args.data_root}/gaussian/'
     else:
         save_dir=f'{args.itype}/notransform/{args.window}/checkpoint_{args.val_chr}/inference_result'
         if not os.path.exists(save_dir):
         # Create the directory if it does not exist
             os.makedirs(save_dir)
         checkpointpath=f'{args.itype}/notransform/{args.window}/checkpoint_{args.val_chr}/models/{args.val_chr}.ckpt'
-        data_dir=f'{args.data_root}/notransform/'
         
-    infer_dataset = inferenceDataset(data_dir=data_dir, window=args.window, length=args.length, chr=args.val_chr, itype=args.itype,timestep=args.timestep)
+    infer_dataset = inferenceDataset(data_dir=args.data_dir, window=args.window, length=args.length, chr=args.val_chr, itype=args.itype,timestep=args.timestep)
     infer_loader=torch.utils.data.DataLoader(infer_dataset,batch_size=1,shuffle=False,drop_last=True)
 
     model = hicomodel.ConvTransModel(True,args.window)
