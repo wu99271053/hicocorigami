@@ -32,7 +32,7 @@ class inferenceDataset(Dataset):
         if not isinstance(chr, list):
             chr = [chr]
         for i in chr:
-            feature_file_name  = f"{i}_{window}_{length}_{itype}_{timestep}_feature.pt"
+            feature_file_name  = f"{i}_{window}_{length}_{timestep}_feature.pt"
             feature_data_path = os.path.join(self.data_dir, feature_file_name)
             feature = torch.load(feature_data_path)
 
