@@ -45,7 +45,7 @@ class inferenceDataset(Dataset):
             return self.x[idx]
 
 def preprocessing(data_dir=None,raw_dir=None,length=None,timestpe=0):
-    nucleosome=f'{raw_dir}/GSE61888_nucs_normed.csv'
+    nucleosome=f'{raw_dir}/GSE61888_nucs_normed_inter.csv'
     fasta=f'{raw_dir}/saccer.fna'
 
     def one_hot_encoding(seq):
