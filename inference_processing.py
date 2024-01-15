@@ -94,7 +94,7 @@ def preprocessing(data_dir=None,raw_dir=None,length=None,timestpe=0):
         dna_matrix[id-1]=matrix
     
     df= pd.read_csv(nucleosome)
-    nodedata_df = df.sort_values(by='nucleosome ID')
+    nodedata_df = df.sort_values(by='nuc_id')
 
     # Extract the desired histone modification columns and append them to the dataframe
     usedhm_df = nodedata_df[[f'H2AK5ac_{timestpe}',f'H2AS129ph_{timestpe}',f'H3K14ac_{timestpe}',f'H3K18ac_{timestpe}',
