@@ -148,7 +148,7 @@ def chromosome_dataset(length,data_dir,data_matrix,window_size,chromosome=None,t
 
             feature_matrices.append(feature_matrix_resize)
 
-        torch.save(feature_matrices, f'{data_dir}/processed/{chr}_{window_size}_{length}_{timestep}_feature.pt')
+        torch.save(feature_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{timestep}_feature.pt')
 
 
     
