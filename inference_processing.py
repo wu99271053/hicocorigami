@@ -1,3 +1,11 @@
+import os
+import torch
+from torch.utils.data import Dataset
+import os
+import torch
+import hicomodel
+from tqdm import tqdm
+import numpy as np
 import torch 
 from Bio import SeqIO
 import pandas as pd
@@ -7,45 +15,37 @@ from scipy.stats import norm
 import argparse
 from skimage.transform import resize
 import os 
-import cv2
 
+class inferenceDataset(Dataset):
+    def __init__(self, data_dir, window, length, chr, itype,timestep):
+        self.data_dir = data_dir
+        self.window = window
+        self.length = length
+        self.itype = itype
+        self.timestep=timestep
 
-def cleaningup(data_dir=None,raw_dir=None,window=None,i_type=None):
-    nucleosome=f'{raw_dir}/histone_modification.csv'
-    interaction=f'{raw_dir}/{i_type}_WT_G1.csv'
+        self.x = []
+        self.y = []
 
-    def removing_repeated():
-        df=pd.read_csv(nucleosome, header=None, usecols=[0, 1],skiprows=1)
-        selected_ids = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
-        new_df = pd.read_csv(interaction, header=None, dtype=np.int32)
-        new_df[0] += 1
-        new_df[1] += 1
-        filtered_df = new_df[~(new_df.iloc[:, 0].isin(selected_ids) | new_df.iloc[:, 1].isin(selected_ids))]
+        # Ensure chr is a list even if it's a single value
+        if not isinstance(chr, list):
+            chr = [chr]
+        for i in chr:
+            feature_file_name  = f"{i}_{window}_{length}_{itype}_{timestep}_feature.pt"
+            feature_data_path = os.path.join(self.data_dir, feature_file_name)
+            feature = torch.load(feature_data_path)
 
-    # Save the filtered DataFrame to a new CSV
-        return filtered_df,selected_ids
-    
-    def removing_duplicated(df):
-        df['key'] = df.apply(lambda row: tuple(sorted([row[0], row[1]])), axis=1)
+            # Concatenate the new data to the existing tensor
+            self.x.extend(feature)
+        
+    def __len__(self):
+            return len(self.x)
 
-    # Sort by 'key' and keep the first occurrence
-        df[[0, 1]] = df.apply(lambda row: sorted([row[0], row[1]]), axis=1, result_type='expand')
-        df_sorted = df.sort_values(by='key').drop_duplicates(subset='key', keep='first')
-        df_droped=df_sorted.drop(columns='key')
-        df_filtered = df_droped[df_droped.iloc[:, 1] - df_droped.iloc[:, 0] <= window]
-        df_filtered.to_csv(f'{data_dir}/{i_type}_{window}.csv',index=False,header=None)
-    
-    df1,selected_id=removing_repeated()
-    #df2=removing_duplicated(df1)
-    removing_duplicated(df1)
-    #filling_zeros(df2,window=window)
-    return selected_id
+    def __getitem__(self, idx):
+            return self.x[idx]
 
-
-
-
-def preprocessing(data_dir=None,raw_dir=None,length=None):
-    nucleosome=f'{raw_dir}/histone_modification.csv'
+def preprocessing(data_dir=None,raw_dir=None,length=None,timestpe=0):
+    nucleosome=f'{raw_dir}/GSE61888_nucs_normed.csv'
     fasta=f'{raw_dir}/saccer.fna'
 
     def one_hot_encoding(seq):
@@ -82,7 +82,7 @@ def preprocessing(data_dir=None,raw_dir=None,length=None):
         return expanded_array
         
     records = list(SeqIO.parse(fasta, "fasta"))
-    node=pd.read_csv(nucleosome,header=None,usecols=[0,2,3], dtype=np.int32,skiprows=1)
+    node=pd.read_csv(nucleosome,header=None,usecols=[0,1,2], dtype=np.int32,skiprows=1)
     dna_matrix = np.zeros((node.shape[0],4,length), dtype=np.int8)
 
     for index,rows in node.iterrows():
@@ -97,27 +97,22 @@ def preprocessing(data_dir=None,raw_dir=None,length=None):
     nodedata_df = df.sort_values(by='nucleosome ID')
 
     # Extract the desired histone modification columns and append them to the dataframe
-    usedhm_df = nodedata_df[['H2AK5ac','H2AS129ph','H3K14ac','H3K18ac',
-                                    'H3K23ac',	'H3K27ac','H3K36me','H3K36me2',
-                                    'H3K36me3','H3K4ac','H3K4me','H3K4me2','H3K4me3',
-                                    'H3K56ac','H3K79me','H3K79me3','H3K9ac','H3S10ph','H4K12ac',
-                                    'H4K16ac','H4K20me','H4K5ac','H4K8ac','H4R3me','H4R3me2s','Htz1']]
+    usedhm_df = nodedata_df[[f'H2AK5ac_{timestpe}',f'H2AS129ph_{timestpe}',f'H3K14ac_{timestpe}',f'H3K18ac_{timestpe}',
+                                    f'H3K23ac_{timestpe}',	f'H3K27ac_{timestpe}',f'H3K36me_{timestpe}',f'H3K36me2_{timestpe}',
+                                    f'H3K36me3_{timestpe}',f'H3K4ac_{timestpe}',f'H3K4me_{timestpe}',f'H3K4me2_{timestpe}',f'H3K4me3_{timestpe}',
+                                    f'H3K56ac_{timestpe}',f'H3K79me_{timestpe}',f'H3K79me3_{timestpe}',f'H3K9ac_{timestpe}',f'H3S10ph_{timestpe}',f'H4K12ac_{timestpe}',
+                                    f'H4K16ac_{timestpe}',f'H4K20me_{timestpe}',f'H4K5ac_{timestpe}',f'H4K8ac_{timestpe}',f'H4R3me_{timestpe}',f'H4R3me2s_{timestpe}',f'Htz1_{timestpe}']]
         
     feature_matrix=transform_dataframe(usedhm_df, length)
     data_matrix=np.concatenate((dna_matrix,feature_matrix),axis=1)
-    np.save(f'{data_dir}/{length}.npy',data_matrix)
+    np.save(f'{data_dir}/{length}_{timestpe}.npy',data_matrix)
     
     return data_matrix
 
 
-def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size,chromosome=None,gaussian=None):
-    print(f'using gaussian?{gaussian}')
-    df=pd.read_csv(f'{data_dir}/{itype}_{window_size}.csv',header=None,dtype=np.int32)
-    df.columns = ['id1', 'id2', 'value']
-    value_dict = {(row['id1'], row['id2']): row['value'] for index, row in df.iterrows()}
+def chromosome_dataset(length,data_dir,itype,data_matrix,window_size,chromosome=None,timestep=0):
 
     data_matrix=data_matrix
-    selected_id=selected_id
     window_size=window_size
 
 
@@ -146,49 +141,23 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,selected_id,window_size
 
         
         feature_matrices = []
-        contact_matrices = []
         for start_id in tqdm(range(lower_bound,max_id+1)):
-            if start_id in selected_id:
-                continue
 
             feature_matrix_resize = data_matrix[start_id - 1 : start_id - 1 + window_size].reshape(30, -1).astype(np.float16)
             #fake_window_size=60
 
-
-            contact_matrix = np.zeros((window_size, window_size))#windowsize change to fake window size if not bluring.
-
-            for i in range(window_size):
-                for j in range(i,window_size):
-                    id1 = start_id + i
-                    id2 = start_id + j
-
-                    # Fetch value from df if it exists
-                    value = value_dict.get((id1, id2), 0)
-                    #value = subset_df.loc[(subset_df['id1'] == id1) & (subset_df['id2'] == id2), 'value']
-                    contact_matrix[i, j] = contact_matrix[j, i]=value
-            
-            
-            #contact_matrix_resize=resize(contact_matrix,(window_size,window_size),anti_aliasing=True).astype(np.float16)
-            if gaussian:
-                contact_matrix_resize= cv2.GaussianBlur(contact_matrix, (3, 3), 0)
-            else:
-                contact_matrix_resize=contact_matrix
-
-            
-            contact_matrices.append(contact_matrix_resize)
             feature_matrices.append(feature_matrix_resize)
 
-        torch.save(contact_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_contact.pt')
-        torch.save(feature_matrices, f'{data_dir}/{chr}_{window_size}_{length}_{itype}_feature.pt')
+        torch.save(feature_matrices, f'{data_dir}/processed/{chr}_{window_size}_{length}_{itype}_{timestep}_feature.pt')
 
 
     
     for i in tqdm(range(1,17)):
         generate_matrix(i)
 
-
-
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    import argparse
     parser = argparse.ArgumentParser(description='C.Origami_like Training Module.')
     parser.add_argument('--raw_dir',required=True,
                         help='Path to the raw data')
@@ -200,17 +169,29 @@ if __name__ == "__main__":
                         help='interaction type')
     parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
-    parser.add_argument('--gaussian',action='store_true',
+    parser.add_argument('--model_dir',required=True,
                         help='processed data and saved checkpoint')
-
+    parser.add_argument('--val_chr', dest='val_chr', default=1,
+                            type=int,
+                            help='Random seed for training')
+    parser.add_argument('--timestep', default=0,
+                            type=int,
+                            help='Random seed for training')
     
     
     args = parser.parse_args()
 
+    # data_matrix=np.load(f'{args.data_dir}/{args.length}.npy')
+    # df=pd.read_csv(f'{args.raw_dir}/histone_modification.csv', header=None, usecols=[0, 1],skiprows=1)
+    # selected_id = df[df.iloc[:, 1] == -1].iloc[:, 0].tolist()
+
     if not os.path.exists(args.data_dir):
     # Create the directory if it does not exist
         os.makedirs(args.data_dir)
-    selected_id=cleaningup(data_dir=args.data_dir,raw_dir=args.raw_dir,window=args.window,i_type=args.i_type)
-    data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length)
 
-    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,selected_id=selected_id,window_size=args.window,gaussian=args.gaussian)
+    data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length,timestpe=args.timestep)
+    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,window_size=args.window,timestep=args.timestep)
+
+
+
+
