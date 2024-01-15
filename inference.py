@@ -53,7 +53,7 @@ if __name__ == "__main__":
                         help='size of heatmap')
     parser.add_argument('--length',default=128,type=int,
                         help='length of Nucleosomal DNA')
-    parser.add_argument('--i_type',required=True,
+    parser.add_argument('--itype',required=True,
                         help='interaction type')
     parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
