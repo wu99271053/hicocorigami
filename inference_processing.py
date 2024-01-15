@@ -110,7 +110,7 @@ def preprocessing(data_dir=None,raw_dir=None,length=None,timestpe=0):
     return data_matrix
 
 
-def chromosome_dataset(length,data_dir,itype,data_matrix,window_size,chromosome=None,timestep=0):
+def chromosome_dataset(length,data_dir,data_matrix,window_size,chromosome=None,timestep=0):
 
     data_matrix=data_matrix
     window_size=window_size
@@ -148,7 +148,7 @@ def chromosome_dataset(length,data_dir,itype,data_matrix,window_size,chromosome=
 
             feature_matrices.append(feature_matrix_resize)
 
-        torch.save(feature_matrices, f'{data_dir}/processed/{chr}_{window_size}_{length}_{itype}_{timestep}_feature.pt')
+        torch.save(feature_matrices, f'{data_dir}/processed/{chr}_{window_size}_{length}_{timestep}_feature.pt')
 
 
     
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         os.makedirs(args.data_dir)
 
     data_matrix=preprocessing(data_dir=args.data_dir,raw_dir=args.raw_dir,length=args.length,timestpe=args.timestep)
-    chromosome_dataset(args.length,data_dir=args.data_dir,itype=args.i_type,data_matrix=data_matrix,window_size=args.window,timestep=args.timestep)
+    chromosome_dataset(args.length,data_dir=args.data_dir,data_matrix=data_matrix,window_size=args.window,timestep=args.timestep)
 
 
 
