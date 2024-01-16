@@ -167,9 +167,7 @@ if __name__ == "__main__":
                         help='length of Nucleosomal DNA')
     parser.add_argument('--data_dir',required=True,
                         help='processed data and saved checkpoint')
-    parser.add_argument('--val_chr', dest='val_chr', default=1,
-                            type=int,
-                            help='Random seed for training')
+
     parser.add_argument('--timestep', default=0,
                             type=int,
                             help='Random seed for training')

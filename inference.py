@@ -111,5 +111,4 @@ if __name__ == "__main__":
             outputs = model(inputs)
             outputlist.append(outputs.cpu().view(-1).numpy())
 
-    np.savetxt(f'{save_dir}/prediction_{args.timestep}.csv', np.concatenate(outputlist), delimiter=",")
-
+    np.savetxt(f'{save_dir}/prediction_{args.timestep}.csv', np.round(np.concatenate(outputlist),2), delimiter=",")
