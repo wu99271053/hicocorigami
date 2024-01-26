@@ -142,9 +142,15 @@ if __name__ == '__main__':
             outputlist.append(outputs.cpu().view(-1).numpy())
             targetlist.append(targets.cpu().view(-1).numpy())
             untrain_outputlist.append(untrain_outputs.cpu().view(-1).numpy())
-    os.makedirs(f'{save_dir}/csv')
-    os.makedirs(f'{save_dir}/plots')
 
-    np.savetxt(f'{save_dir}/csv/computed_outputs.csv', np.round(np.concatenate(outputlist), 2), delimiter=",")
-    np.savetxt(f'{save_dir}/csv/targets.csv', np.round(np.concatenate(outputlist), 2), delimiter=",")
-    np.savetxt(f'{save_dir}/csv/untrain_outputs.csv', np.round(np.concatenate(outputlist), 2), delimiter=",")
+    computed_outputs = np.round(np.concatenate(outputlist), 2)
+    targets = np.round(np.concatenate(targetlist), 2)
+    untrain_outputs = np.round(np.concatenate(untrain_outputlist), 2)
+    combined_data = np.column_stack((computed_outputs, targets, untrain_outputs))
+
+    
+    os.makedirs(f'{save_dir}/csv',exist_ok=True)
+    os.makedirs(f'{save_dir}/plots',exist_ok=True)
+
+    np.savetxt(f'{save_dir}/csv/combined_data.csv', combined_data, delimiter=",")
+
