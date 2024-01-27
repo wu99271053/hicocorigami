@@ -5,8 +5,8 @@ for chr in {1..16}; do
     echo "Training on chromosome: $chr"
     
     # Run the train.py script with the current chromosome
-    python hicocorigami/train.py --window=16 --itype=Combined --data-root=processed/gaussian --save_path=Combined/gaussian/16/checkpoint_$chr
-    python hicocorigami/test.py --window=16 --val_chr=$chr --itype=Combined --data_root=processed --gaussian
+    python hicocorigami/reduce_size.py --dir=Tandem-/gaussian/16/checkpoint_$chr/result/csv/
+    python hicocorigami/reduce_size.py --dir=Combined/gaussian/16/checkpoint_$chr/result/csv/
 done
 
 
